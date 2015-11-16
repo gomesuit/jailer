@@ -6,25 +6,27 @@
 	<title>sample page</title>
 </head>
 <body>
-<!-- 	<div th:text="${module.name}" /> -->
-<!-- 	<a th:href="${module.name} + '/create'" th:text="create" /> -->
+	<form action="#" th:action="@{/dataSourceId/regist}" th:object="${dataSourceIdForm}" method="post">
+		<table border="1" rules="all">
+			<tr>
+				<td>dataSourceId</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{dataSourceId}" /></td>
+			</tr>
+		</table>
+		<input type="submit" value="Submit" />
+	</form>
+	
 	<table border="1" rules="all">
 		<tr>
-			<td>parameter</td>
-			<td>addedVersion</td>
-			<td>required</td>
-			<td>defaultValue</td>
-			<td>choices</td>
-			<td>description</td>
+			<td>dataSourceId</td>
 		</tr>
-<!-- 		<tr th:each="parameter : ${module.parameterList}"> -->
-<!-- 			<td th:text="${parameter.name}" /> -->
-<!-- 			<td th:text="${parameter.addedVersion}" /> -->
-<!-- 			<td th:text="${parameter.required}" /> -->
-<!-- 			<td th:text="${parameter.defaultValue}" /> -->
-<!-- 			<td th:text="${parameter.choices}" /> -->
-<!-- 			<td th:text="${parameter.description}" /> -->
-<!-- 		</tr> -->
+		<tr th:each="dataSourceId : ${dataSourceIdList}">
+			<td>
+				<a th:href="@{/dataSource/view(dataSourceId=${dataSourceId})}" th:text="${dataSourceId}" />
+			</td>
+		</tr>
 	</table>
 </body>
 </html>

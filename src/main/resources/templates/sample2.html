@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta content="ja" http-equiv="Content-Language" />
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+	<title>sample page</title>
+</head>
+<body>
+	<form action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceForm}" method="post">
+		<input type="hidden" th:field="*{dataSourceId}" />
+		<table border="1" rules="all">
+			<tr>
+				<td>url</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{url}" /></td>
+			</tr>
+		</table>
+		<input type="submit" value="Submit" />
+	</form>
+	
+	<form action="#" th:action="@{/dataSourceParameter/regist}" th:object="${dataSourceParameterForm}" method="post">
+		<input type="hidden" th:field="*{dataSourceId}" />
+		<table border="1" rules="all">
+			<tr>
+				<td>key</td>
+				<td>value</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{key}" /></td>
+				<td><input type="text" th:field="*{value}" /></td>
+			</tr>
+		</table>
+		<input type="submit" value="Submit" />
+	</form>
+	
+	<table border="1" rules="all">
+		<tr>
+			<td>dataSourceId</td>
+			<td>url</td>
+		</tr>
+		<tr>
+			<td>
+				<div th:text="${jailerDataSource.dataSourceId}" />
+			</td>
+			<td>
+				<div th:text="${jailerDataSource.url}" />
+			</td>
+		</tr>
+	</table>
+	<table border="1" rules="all">
+		<tr>
+			<td>key</td>
+			<td>value</td>
+		</tr>
+		<tr th:each="property : ${jailerDataSource.propertyList}">
+			<td>
+				<div th:text="${property.key}" />
+			</td>
+			<td>
+				<div th:text="${property.value}" />
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
