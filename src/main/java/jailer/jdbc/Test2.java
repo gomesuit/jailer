@@ -9,7 +9,7 @@ import java.sql.Statement;
 public class Test2 {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		Class.forName("net.sf.log4jdbc.sql.jdbcapi.DriverSpy");
+		//Class.forName("net.sf.log4jdbc.sql.jdbcapi.DriverSpy");
 		Connection conn = DriverManager.getConnection("jdbc:log4jdbc:mysql://localhost/jailer", "jailer", "password");
 		
 		Statement stmt = conn.createStatement();
