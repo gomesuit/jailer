@@ -7,17 +7,18 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 
-public class Test4 {
+public class Test5 {
 
 	public static void main(String[] args) throws SQLException {
-		MysqlDataSource mysqlDS = new MysqlDataSource();
-		mysqlDS.setUrl("jdbc:mysql://localhost/jailer");
-		mysqlDS.setUser("jailer");
-		mysqlDS.setPassword("password");
+		BasicDataSource ds = new BasicDataSource();
+		ds.setDriverClassName("com.mysql.jdbc.Driver");
+		ds.setUrl("jdbc:mysql://localhost/jailer");
+		ds.setUsername("jailer");
+		ds.setPassword("password");
 		
-		DataSource dataSource = mysqlDS;
+		DataSource dataSource = ds;
 		
 		Connection conn = dataSource.getConnection();
 
@@ -28,9 +29,7 @@ public class Test4 {
 			System.out.println(rset.getInt(1));
 		}
 		
-		rset.close();
-		stmt.close();
-		conn.close();
+		ds.close();
 	}
 
 }
