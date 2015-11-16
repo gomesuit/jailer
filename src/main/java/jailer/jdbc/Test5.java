@@ -13,7 +13,7 @@ public class Test5 {
 
 	public static void main(String[] args) throws SQLException {
 		BasicDataSource ds = new BasicDataSource();
-		ds.setDriverClassName("com.mysql.jdbc.Driver");
+		ds.setDriverClassName("jailer.jdbc.JailerDriver");
 		ds.setUrl("jdbc:mysql://localhost/jailer");
 		ds.setUsername("jailer");
 		ds.setPassword("password");
