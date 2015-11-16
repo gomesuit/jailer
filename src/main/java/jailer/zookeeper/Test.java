@@ -1,4 +1,4 @@
-package jailer;
+package jailer.zookeeper;
 
 import jailer.jdbc.JailerDataSource;
 

@@ -1,4 +1,4 @@
-package jailer;
+package jailer.zookeeper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

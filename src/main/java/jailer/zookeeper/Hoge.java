@@ -1,4 +1,4 @@
-package jailer;
+package jailer.zookeeper;
 
 public class Hoge {
     private int id;

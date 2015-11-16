@@ -1,4 +1,4 @@
-package jailer;
+package jailer.zookeeper;
 
 import java.util.Arrays;
 
