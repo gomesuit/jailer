@@ -29,7 +29,7 @@ public class JailerDriver implements Driver{
 //		}
 //	}
 	
-	private JailerDataSource getJailerDataSource() throws Exception{
+	private JailerDataSource getJailerDataSource(String url) throws Exception{
 		ZooKeeper zk = new ZooKeeper("192.168.33.11:2181", 3000, null);
 		byte strByte[] = zk.getData("/tmp", false, null);
 		String result = new String(strByte, "UTF-8");
@@ -53,7 +53,7 @@ public class JailerDriver implements Driver{
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
 		try {
-			JailerDataSource JailerDataSource = getJailerDataSource();
+			JailerDataSource JailerDataSource = getJailerDataSource(url);
 			this.realUrl = JailerDataSource.getUrl();
 			for(JailerProperty jailerProperty : JailerDataSource.getPropertyList()){
 				info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
@@ -119,7 +119,7 @@ public class JailerDriver implements Driver{
 		if(realUrl == null){
 			JailerDataSource JailerDataSource;
 			try {
-				JailerDataSource = getJailerDataSource();
+				JailerDataSource = getJailerDataSource(url);
 				this.realUrl = JailerDataSource.getUrl();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
