@@ -1,5 +1,7 @@
 package jailer;
 
+import jailer.jdbc.JailerDataSource;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +23,18 @@ public class Test {
 		ZooKeeper zk = new ZooKeeper("192.168.33.11:2181", 3000, null);
 		//List<ACL> acls = new ArrayList<ACL>();
 		//acls.add(new ACL(ALL, ANYONE_ID_UNSAFE));
-		Hoge hoge = new Hoge(1, "test");
+		JailerDataSource jailerDataSource = new JailerDataSource();
+		jailerDataSource.setUrl("jdbc:mysql://localhost/jailer");
+		jailerDataSource.addProperty("user", "jailer");
+		jailerDataSource.addProperty("password", "password");
 		ObjectMapper mapper = new ObjectMapper();
-		String json = mapper.writeValueAsString(hoge);
+		String json = mapper.writeValueAsString(jailerDataSource);
 		
 		zk.create("/tmp", json.getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 		byte strByte[] = zk.getData("/tmp", false, null);
 		String result = new String(strByte, "UTF-8");
-		Hoge hoge2 = mapper.readValue(result, Hoge.class);
-		System.out.println(hoge2);
+		JailerDataSource jailerDataSource2 = mapper.readValue(result, JailerDataSource.class);
+		System.out.println(jailerDataSource2);
 		
 		zk.close();
 	}

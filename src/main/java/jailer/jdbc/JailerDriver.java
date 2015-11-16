@@ -1,5 +1,6 @@
 package jailer.jdbc;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -9,6 +10,11 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZooKeeper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class JailerDriver implements Driver{
 
 	private Driver lastUnderlyingDriverRequested;
@@ -16,16 +22,30 @@ public class JailerDriver implements Driver{
 	private String realUrl;
 	private Properties info = new Properties();
 	
-	public JailerDriver(){
-		this.realUrl = "jdbc:mysql://localhost/jailer";
-		info.setProperty("user", "jailer");
-		info.setProperty("password", "password");
+	public JailerDriver() throws Exception{
+		JailerDataSource JailerDataSource = getJailerDataSource();
+		this.realUrl = JailerDataSource.getUrl();
+		for(JailerProperty jailerProperty : JailerDataSource.getPropertyList()){
+			info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
+		}
+	}
+	
+	private JailerDataSource getJailerDataSource() throws Exception{
+		ZooKeeper zk = new ZooKeeper("192.168.33.11:2181", 3000, null);
+		byte strByte[] = zk.getData("/tmp", false, null);
+		String result = new String(strByte, "UTF-8");
+		ObjectMapper mapper = new ObjectMapper();
+		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
+		return jailerDataSource;
 	}
 	
 	static{
 		try {
 			DriverManager.registerDriver(new JailerDriver());
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
