@@ -16,7 +16,11 @@ public class JailerDriver implements Driver{
 	static{
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
+			DriverManager.registerDriver(new JailerDriver());
 		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
