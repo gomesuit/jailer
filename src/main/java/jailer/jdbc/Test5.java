@@ -14,9 +14,7 @@ public class Test5 {
 	public static void main(String[] args) throws SQLException {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName("jailer.jdbc.JailerDriver");
-		ds.setUrl("jdbc:mysql://localhost/jailer");
-		ds.setUsername("jailer");
-		ds.setPassword("password");
+		ds.setUrl("jdbc:jailer://192.168.33.11:2181/prefix?id=aaa&stage=bbb");
 		
 		DataSource dataSource = ds;
 		

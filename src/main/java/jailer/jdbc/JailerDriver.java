@@ -13,6 +13,15 @@ public class JailerDriver implements Driver{
 
 	private Driver lastUnderlyingDriverRequested;
 	
+	private String realUrl;
+	private Properties info = new Properties();
+	
+	public JailerDriver(){
+		this.realUrl = "jdbc:mysql://localhost/jailer";
+		info.setProperty("user", "jailer");
+		info.setProperty("password", "password");
+	}
+	
 	static{
 		try {
 			DriverManager.registerDriver(new JailerDriver());
@@ -27,6 +36,7 @@ public class JailerDriver implements Driver{
 		url = this.getRealUrl(url);
 		Driver d = DriverManager.getDriver(url);
 		lastUnderlyingDriverRequested = d;
+		info.putAll(this.info);
 		return new JailerConnection(d.connect(url, info));
 	}
 
@@ -67,7 +77,7 @@ public class JailerDriver implements Driver{
 
 	private String getRealUrl(String url)
 	{
-		return "jdbc:mysql://localhost/jailer";
+		return realUrl;
 	}
 
 }
