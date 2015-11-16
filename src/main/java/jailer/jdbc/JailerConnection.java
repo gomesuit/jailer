@@ -94,6 +94,7 @@ public class JailerConnection implements Connection{
 	@Override
 	public void close() throws SQLException {
 		// TODO Auto-generated method stub
+		System.out.println("close()");
 		realConnection.close();
 	}
 
