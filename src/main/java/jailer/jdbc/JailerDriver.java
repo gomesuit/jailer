@@ -1,5 +1,6 @@
 package jailer.jdbc;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -15,6 +16,8 @@ import org.apache.zookeeper.ZooKeeper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JailerDriver implements Driver{
+	private static final String Prefix = "jdbc:";
+	private static final String zookeeperRoot = "/jailer";
 
 	private Driver lastUnderlyingDriverRequested;
 	
@@ -30,12 +33,36 @@ public class JailerDriver implements Driver{
 //	}
 	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{
-		ZooKeeper zk = new ZooKeeper("192.168.33.11:2181", 3000, null);
-		byte strByte[] = zk.getData("/tmp", false, null);
+		String host = getHost(url);
+		int port = getPort(url);
+		String path = getPath(url);
+		ZooKeeper zk = new ZooKeeper(host + ":" + port, 3000, null);
+		byte strByte[] = zk.getData(path, false, null);
 		String result = new String(strByte, "UTF-8");
 		ObjectMapper mapper = new ObjectMapper();
 		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
 		return jailerDataSource;
+	}
+	
+	private String getPath(String url) throws Exception{
+		return zookeeperRoot + getUri(url).getPath();
+	}
+	
+	private String getHost(String url) throws Exception{
+		return getUri(url).getHost();
+	}
+	
+	private int getPort(String url) throws Exception{
+		return getUri(url).getPort();
+	}
+	
+	private String getExcludePrefix(String url){
+		return url.substring(Prefix.length());
+	}
+	
+	private URI getUri(String url) throws Exception{
+		String strUri = getExcludePrefix(url);
+		return new URI(strUri);
 	}
 	
 	static{

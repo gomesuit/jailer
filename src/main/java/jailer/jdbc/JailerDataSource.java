@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JailerDataSource {
+	private String dataSourceId;
 	private String url;
 	private List<JailerProperty> propertyList = new ArrayList<>();
 	
@@ -24,9 +25,11 @@ public class JailerDataSource {
 		this.propertyList = propertyList;
 	}
 
-	@Override
-	public String toString() {
-		return "JailerDataSource [url=" + url + ", propertyList="
-				+ propertyList + "]";
+	public String getDataSourceId() {
+		return dataSourceId;
+	}
+
+	public void setDataSourceId(String dataSourceId) {
+		this.dataSourceId = dataSourceId;
 	}
 }
