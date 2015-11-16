@@ -31,7 +31,7 @@ public class JailerDriver implements Driver{
 		url = this.getRealUrl(url);
 		Driver d = DriverManager.getDriver(url);
 		lastUnderlyingDriverRequested = d;
-		return d.connect(url, info);
+		return new JailerConnection(d.connect(url, info));
 	}
 
 	@Override

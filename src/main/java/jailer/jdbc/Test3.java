@@ -10,7 +10,7 @@ public class Test3 {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		Class.forName("jailer.jdbc.JailerDriver");
-		Connection conn = DriverManager.getConnection("jdbc:log4jdbc:mysql://localhost/jailer", "jailer", "password");
+		Connection conn = DriverManager.getConnection("ajdbc:log4jdbc:mysql://localhost/jailer", "jailer", "password");
 		
 		Statement stmt = conn.createStatement();
 		ResultSet rset = stmt.executeQuery("SELECT 1 FROM DUAL");
