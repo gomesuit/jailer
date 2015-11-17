@@ -27,6 +27,13 @@ public class Test5 {
 			System.out.println(rset.getInt(1));
 		}
 		
+		try {
+			Thread.sleep(60000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		ds.close();
 	}
 

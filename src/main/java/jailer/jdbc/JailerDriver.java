@@ -11,6 +11,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,27 +23,39 @@ public class JailerDriver implements Driver{
 
 	private Driver lastUnderlyingDriverRequested;
 	
-	private String realUrl;
 	private Properties info = new Properties();
-	
-//	public JailerDriver() throws Exception{
-//		JailerDataSource JailerDataSource = getJailerDataSource();
-//		this.realUrl = JailerDataSource.getUrl();
-//		for(JailerProperty jailerProperty : JailerDataSource.getPropertyList()){
-//			info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
-//		}
-//	}
+	private JailerDataSource jailerDataSource;
 	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{
 		String host = getHost(url);
 		int port = getPort(url);
 		String path = getPath(url);
-		ZooKeeper zk = new ZooKeeper(host + ":" + port, 3000, null);
-		byte strByte[] = zk.getData(path, false, null);
+		ZooKeeper zk = new ZooKeeper(host + ":" + port, 3000, new DefaultWatcher());
+		byte strByte[] = zk.getData(path, new TestWatcher(), null);
 		String result = new String(strByte, "UTF-8");
 		ObjectMapper mapper = new ObjectMapper();
 		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
 		return jailerDataSource;
+	}
+	
+	private class TestWatcher implements Watcher{
+
+		@Override
+		public void process(WatchedEvent event) {
+			System.out.println("TestWatcher.process!");
+			
+		}
+		
+	}
+	
+	private class DefaultWatcher implements Watcher{
+
+		@Override
+		public void process(WatchedEvent event) {
+			System.out.println("DefaultWatcher.process!");
+			
+		}
+		
 	}
 	
 	private String getPath(String url) throws Exception{
@@ -80,26 +94,35 @@ public class JailerDriver implements Driver{
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
 		try {
-			JailerDataSource JailerDataSource = getJailerDataSource(url);
-			this.realUrl = JailerDataSource.getUrl();
-			for(JailerProperty jailerProperty : JailerDataSource.getPropertyList()){
+			if(this.jailerDataSource == null){
+				this.jailerDataSource = getJailerDataSource(url);
+			}
+			for(JailerProperty jailerProperty : jailerDataSource.getPropertyList()){
 				info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		url = this.getRealUrl(url);
-		Driver d = DriverManager.getDriver(url);
+		String realUrl = jailerDataSource.getUrl();
+		Driver d = DriverManager.getDriver(realUrl);
 		lastUnderlyingDriverRequested = d;
 		info.putAll(this.info);
-		return new JailerConnection(d.connect(url, info));
+		return new JailerConnection(d.connect(realUrl, info));
 	}
 
 	@Override
 	public boolean acceptsURL(String url) throws SQLException {
-		url = this.getRealUrl(url);
-		Driver d = getUnderlyingDriver(url);
+		try {
+			if(this.jailerDataSource == null){
+				this.jailerDataSource = getJailerDataSource(url);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String realUrl = jailerDataSource.getUrl();
+		Driver d = getUnderlyingDriver(realUrl);
 		if (d != null) {
 			lastUnderlyingDriverRequested = d;
 			return true;
@@ -108,9 +131,15 @@ public class JailerDriver implements Driver{
 	}
 
 	@Override
-	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info)
-			throws SQLException {
-		url = this.getRealUrl(url);
+	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
+		try {
+			if(this.jailerDataSource == null){
+				this.jailerDataSource = getJailerDataSource(url);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return lastUnderlyingDriverRequested.getPropertyInfo(url, info);
 	}
 
@@ -140,32 +169,24 @@ public class JailerDriver implements Driver{
 	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
 		return lastUnderlyingDriverRequested.getParentLogger();
 	}
-
-	private String getRealUrl(String url)
-	{
-		if(realUrl == null){
-			JailerDataSource JailerDataSource;
-			try {
-				JailerDataSource = getJailerDataSource(url);
-				this.realUrl = JailerDataSource.getUrl();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return realUrl;
-	}
 	
-	private Driver getUnderlyingDriver(String url) throws SQLException
-	{
-		url = this.getRealUrl(url);
+	private Driver getUnderlyingDriver(String url) throws SQLException{
+		try {
+			if(this.jailerDataSource == null){
+				this.jailerDataSource = getJailerDataSource(url);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String realUrl = jailerDataSource.getUrl();
 		Enumeration<Driver> e = DriverManager.getDrivers();
 
 		Driver d;
 		while (e.hasMoreElements()) {
 			d = e.nextElement();
 
-			if (d.acceptsURL(url)) {
+			if (d.acceptsURL(realUrl)) {
 				return d;
 			}
 		}
