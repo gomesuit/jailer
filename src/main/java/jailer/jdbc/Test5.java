@@ -29,7 +29,7 @@ public class Test5 {
 				e.printStackTrace();
 			}
 			Statement stmt = conn.createStatement();
-			ResultSet rset = stmt.executeQuery("SELECT 1 FROM DUAL");
+			ResultSet rset = stmt.executeQuery("SELECT id FROM test");
 
 			while (rset.next()) {
 				System.out.println(rset.getInt(1));
