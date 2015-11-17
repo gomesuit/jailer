@@ -21,17 +21,15 @@ import java.util.concurrent.Executor;
 
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
-
 
 public class JailerConnection implements Connection{
 	private Connection realConnection;
 	private JailerDriver driver;
 	
-	public JailerConnection(Connection realConnection, ZooKeeper zooKeeper, String path, JailerDriver driver) throws Exception{
+	public JailerConnection(Connection realConnection, JailerDriver driver) throws Exception{
 		this.realConnection = realConnection;
 		this.driver = driver;
-		zooKeeper.exists(path, new TestWatcher());
+		driver.dataSourceWatcher(new TestWatcher());
 	}
 	
 	private class TestWatcher implements Watcher{

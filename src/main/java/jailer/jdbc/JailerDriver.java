@@ -11,7 +11,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
@@ -41,6 +40,10 @@ public class JailerDriver implements Driver{
 		return d.connect(realUrl, info);
 	}
 	
+	public void dataSourceWatcher(Watcher watcher) throws Exception{
+		zooKeeper.exists(getPath(url), watcher);
+	}
+	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{
 		this.url = url;
 		String host = getHost(url);
@@ -52,24 +55,6 @@ public class JailerDriver implements Driver{
 		ObjectMapper mapper = new ObjectMapper();
 		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
 		return jailerDataSource;
-	}
-	
-	private class TestWatcher implements Watcher{
-		
-		@Override
-		public void process(WatchedEvent event) {
-			System.out.println("TestWatcher.process!");
-			try {
-				byte[] strByte = zooKeeper.getData(event.getPath(), new TestWatcher(), null);
-				String result = new String(strByte, "UTF-8");
-				ObjectMapper mapper = new ObjectMapper();
-				jailerDataSource = mapper.readValue(result, JailerDataSource.class);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 	}
 	
 	private class DefaultWatcher implements Watcher{
@@ -133,7 +118,7 @@ public class JailerDriver implements Driver{
 		lastUnderlyingDriverRequested = d;
 		info.putAll(this.info);
 		try {
-			return new JailerConnection(d.connect(realUrl, info), zooKeeper, getPath(url), this);
+			return new JailerConnection(d.connect(realUrl, info), this);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
