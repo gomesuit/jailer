@@ -37,6 +37,7 @@ public class JailerConnection implements Connection{
 		@Override
 		public void process(WatchedEvent event) {
 			System.out.println("TestWatcher.process!");
+			//System.out.println(Thread.currentThread().getName());
 			try {
 				Connection newConnection = driver.reCreateConnection(event.getPath(), new TestWatcher());
 				Connection oldConnection = realConnection;

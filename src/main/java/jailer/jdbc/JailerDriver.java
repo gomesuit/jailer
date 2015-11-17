@@ -64,7 +64,6 @@ public class JailerDriver implements Driver{
 		@Override
 		public void process(WatchedEvent event) {
 			System.out.println("DefaultWatcher.process!");
-			
 		}
 		
 	}
