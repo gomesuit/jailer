@@ -133,8 +133,8 @@ public class JailerDriver implements Driver{
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new SQLException();
 		}
-		return d.connect(realUrl, info);
 	}
 
 	@Override

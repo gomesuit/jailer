@@ -40,8 +40,10 @@ public class JailerConnection implements Connection{
 		public void process(WatchedEvent event) {
 			System.out.println("TestWatcher.process!");
 			try {
-				realConnection.close();
-				realConnection = driver.reCreateConnection(event.getPath());
+				Connection newConnection = driver.reCreateConnection(event.getPath());
+				Connection oldConnection = realConnection;
+				realConnection = newConnection;
+				oldConnection.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
