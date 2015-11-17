@@ -29,12 +29,16 @@ public class JailerDriver implements Driver{
 	private ZooKeeper zooKeeper;
 	private String url;
 	
-	public Connection reCreateConnection(String path) throws Exception{
-		byte strByte[] = zooKeeper.getData(path, null, null);
-		String result = new String(strByte, "UTF-8");
-		ObjectMapper mapper = new ObjectMapper();
-		jailerDataSource = mapper.readValue(result, JailerDataSource.class);
-		return this.connect(url, info);
+	public Connection reCreateConnection(String path, Watcher watcher) throws Exception{
+		this.jailerDataSource = getJailerDataSource(url);
+		for(JailerProperty jailerProperty : jailerDataSource.getPropertyList()){
+			info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
+		}
+		String realUrl = jailerDataSource.getUrl();
+		Driver d = DriverManager.getDriver(realUrl);
+		lastUnderlyingDriverRequested = d;
+		zooKeeper.exists(path, watcher);
+		return d.connect(realUrl, info);
 	}
 	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{

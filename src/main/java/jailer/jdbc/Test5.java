@@ -15,7 +15,7 @@ public class Test5 {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName("jailer.jdbc.JailerDriver");
 		ds.setUrl("jdbc:jailer://192.168.33.11:2181/test?id=aaa&stage=bbb");
-		ds.setMinIdle(10);
+		ds.setInitialSize(0);
 		
 		DataSource dataSource = ds;
 		Connection conn = dataSource.getConnection();
