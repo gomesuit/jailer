@@ -45,11 +45,13 @@ public class JailerDriver implements Driver{
 	}
 	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{
-		this.url = url;
-		String host = getHost(url);
-		int port = getPort(url);
+		if(this.url == null || !this.url.equals(url)){
+			this.url = url;
+			String host = getHost(url);
+			int port = getPort(url);
+			zooKeeper = new ZooKeeper(host + ":" + port, 3000, new DefaultWatcher());
+		}
 		String path = getPath(url);
-		zooKeeper = new ZooKeeper(host + ":" + port, 3000, new DefaultWatcher());
 		byte strByte[] = zooKeeper.getData(path, null, null);
 		String result = new String(strByte, "UTF-8");
 		ObjectMapper mapper = new ObjectMapper();
