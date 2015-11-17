@@ -25,13 +25,14 @@ public class JailerDriver implements Driver{
 	
 	private Properties info = new Properties();
 	private JailerDataSource jailerDataSource;
+	private ZooKeeper zooKeeper;
 	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{
 		String host = getHost(url);
 		int port = getPort(url);
 		String path = getPath(url);
-		ZooKeeper zk = new ZooKeeper(host + ":" + port, 3000, new DefaultWatcher());
-		byte strByte[] = zk.getData(path, new TestWatcher(), null);
+		zooKeeper = new ZooKeeper(host + ":" + port, 3000, new DefaultWatcher());
+		byte strByte[] = zooKeeper.getData(path, new TestWatcher(), null);
 		String result = new String(strByte, "UTF-8");
 		ObjectMapper mapper = new ObjectMapper();
 		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
@@ -39,11 +40,19 @@ public class JailerDriver implements Driver{
 	}
 	
 	private class TestWatcher implements Watcher{
-
+		
 		@Override
 		public void process(WatchedEvent event) {
 			System.out.println("TestWatcher.process!");
-			
+			try {
+				byte[] strByte = zooKeeper.getData(event.getPath(), new TestWatcher(), null);
+				String result = new String(strByte, "UTF-8");
+				ObjectMapper mapper = new ObjectMapper();
+				jailerDataSource = mapper.readValue(result, JailerDataSource.class);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}

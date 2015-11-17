@@ -17,21 +17,22 @@ public class Test5 {
 		ds.setUrl("jdbc:jailer://192.168.33.11:2181/test?id=aaa&stage=bbb");
 		
 		DataSource dataSource = ds;
-		
 		Connection conn = dataSource.getConnection();
-
 		Statement stmt = conn.createStatement();
-		ResultSet rset = stmt.executeQuery("SELECT 1 FROM DUAL");
-
-		while (rset.next()) {
-			System.out.println(rset.getInt(1));
-		}
 		
-		try {
-			Thread.sleep(60000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		boolean flg = true;
+		while(flg){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ResultSet rset = stmt.executeQuery("SELECT 1 FROM DUAL");
+
+			while (rset.next()) {
+				System.out.println(rset.getInt(1));
+			}
 		}
 		
 		ds.close();
