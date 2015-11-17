@@ -19,11 +19,35 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper;
+
+
 public class JailerConnection implements Connection{
 	private Connection realConnection;
+	private JailerDriver driver;
 	
-	public JailerConnection(Connection realConnection){
+	public JailerConnection(Connection realConnection, ZooKeeper zooKeeper, String path, JailerDriver driver) throws Exception{
 		this.realConnection = realConnection;
+		this.driver = driver;
+		zooKeeper.exists(path, new TestWatcher());
+	}
+	
+	private class TestWatcher implements Watcher{
+		
+		@Override
+		public void process(WatchedEvent event) {
+			System.out.println("TestWatcher.process!");
+			try {
+				realConnection.close();
+				realConnection = driver.reCreateConnection(event.getPath());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	public Connection getRealConnection() {

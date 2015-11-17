@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
@@ -26,13 +27,23 @@ public class JailerDriver implements Driver{
 	private Properties info = new Properties();
 	private JailerDataSource jailerDataSource;
 	private ZooKeeper zooKeeper;
+	private String url;
+	
+	public Connection reCreateConnection(String path) throws Exception{
+		byte strByte[] = zooKeeper.getData(path, null, null);
+		String result = new String(strByte, "UTF-8");
+		ObjectMapper mapper = new ObjectMapper();
+		jailerDataSource = mapper.readValue(result, JailerDataSource.class);
+		return this.connect(url, info);
+	}
 	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{
+		this.url = url;
 		String host = getHost(url);
 		int port = getPort(url);
 		String path = getPath(url);
 		zooKeeper = new ZooKeeper(host + ":" + port, 3000, new DefaultWatcher());
-		byte strByte[] = zooKeeper.getData(path, new TestWatcher(), null);
+		byte strByte[] = zooKeeper.getData(path, null, null);
 		String result = new String(strByte, "UTF-8");
 		ObjectMapper mapper = new ObjectMapper();
 		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
@@ -117,7 +128,13 @@ public class JailerDriver implements Driver{
 		Driver d = DriverManager.getDriver(realUrl);
 		lastUnderlyingDriverRequested = d;
 		info.putAll(this.info);
-		return new JailerConnection(d.connect(realUrl, info));
+		try {
+			return new JailerConnection(d.connect(realUrl, info), zooKeeper, getPath(url), this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return d.connect(realUrl, info);
 	}
 
 	@Override

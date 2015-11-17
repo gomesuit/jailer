@@ -15,10 +15,10 @@ public class Test5 {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName("jailer.jdbc.JailerDriver");
 		ds.setUrl("jdbc:jailer://192.168.33.11:2181/test?id=aaa&stage=bbb");
+		ds.setMinIdle(10);
 		
 		DataSource dataSource = ds;
 		Connection conn = dataSource.getConnection();
-		Statement stmt = conn.createStatement();
 		
 		boolean flg = true;
 		while(flg){
@@ -28,11 +28,13 @@ public class Test5 {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			Statement stmt = conn.createStatement();
 			ResultSet rset = stmt.executeQuery("SELECT 1 FROM DUAL");
 
 			while (rset.next()) {
 				System.out.println(rset.getInt(1));
 			}
+			rset.close();
 		}
 		
 		ds.close();
