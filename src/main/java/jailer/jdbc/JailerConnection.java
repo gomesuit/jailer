@@ -25,11 +25,17 @@ import org.apache.zookeeper.Watcher;
 public class JailerConnection implements Connection{
 	private Connection realConnection;
 	private JailerDriver driver;
+	private String connectionPath;
 	
-	public JailerConnection(Connection realConnection, JailerDriver driver) throws Exception{
+	public JailerConnection(Connection realConnection, JailerDriver driver, String connectionPath) throws Exception{
 		this.realConnection = realConnection;
 		this.driver = driver;
+		this.connectionPath = connectionPath;
 		driver.dataSourceWatcher(new TestWatcher());
+	}
+	
+	public String getConnectionPath() {
+		return connectionPath;
 	}
 	
 	private class TestWatcher implements Watcher{
@@ -39,10 +45,13 @@ public class JailerConnection implements Connection{
 			System.out.println("TestWatcher.process!");
 			//System.out.println(Thread.currentThread().getName());
 			try {
-				Connection newConnection = driver.reCreateConnection(event.getPath(), new TestWatcher());
+				driver.dataSourceWatcher(new TestWatcher());
+				Connection newConnection = driver.reCreateConnection(event.getPath());
 				Connection oldConnection = realConnection;
 				realConnection = newConnection;
 				oldConnection.close();
+				driver.deleteConnection(connectionPath);
+				connectionPath = driver.createConnection(event.getPath());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

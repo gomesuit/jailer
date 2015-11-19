@@ -30,7 +30,7 @@ public class JailerDriver implements Driver{
 	private ZooKeeper zooKeeper;
 	private String url;
 	
-	public Connection reCreateConnection(String path, Watcher watcher) throws Exception{
+	public Connection reCreateConnection(String path) throws Exception{
 		this.jailerDataSource = getJailerDataSource(url);
 		for(JailerProperty jailerProperty : jailerDataSource.getPropertyList()){
 			info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
@@ -38,13 +38,18 @@ public class JailerDriver implements Driver{
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = DriverManager.getDriver(realUrl);
 		lastUnderlyingDriverRequested = d;
-		zooKeeper.exists(path, watcher);
-		createConnection(path);
 		return d.connect(realUrl, info);
 	}
 	
-	private void createConnection(String path) throws Exception{
-		zooKeeper.create(path + "/", "test".getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+	synchronized public String createConnection(String path) throws Exception{
+		String connectionPath = zooKeeper.create(path + "/", "test".getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+		System.out.println("createConnection : " + connectionPath);
+		return connectionPath;
+	}
+	
+	synchronized public void deleteConnection(String path) throws Exception{
+		System.out.println("deleteConnection : " + path);
+		zooKeeper.delete(path, -1);
 	}
 	
 	public void dataSourceWatcher(Watcher watcher) throws Exception{
@@ -126,8 +131,8 @@ public class JailerDriver implements Driver{
 		lastUnderlyingDriverRequested = d;
 		info.putAll(this.info);
 		try {
-			createConnection(getPath(url));
-			return new JailerConnection(d.connect(realUrl, info), this);
+			String connectionPath = createConnection(getPath(url));
+			return new JailerConnection(d.connect(realUrl, info), this, connectionPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
