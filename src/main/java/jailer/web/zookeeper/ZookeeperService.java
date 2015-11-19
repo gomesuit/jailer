@@ -32,7 +32,11 @@ public class ZookeeperService {
 		JailerDataSource jailerDataSource = new JailerDataSource();
 		jailerDataSource.setDataSourceId(form.getDataSourceId());
 		String json = objectToJson(jailerDataSource);
-		zooKeeper.create(path, json.getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		createDataForPersistent(path, json);
+	}
+	
+	private void createDataForPersistent(String path, String data) throws Exception{
+		zooKeeper.create(path, data.getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 	}
 	
 	public void registDataSource(JailerDataSource jailerDataSource) throws Exception{

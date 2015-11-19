@@ -11,9 +11,11 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.ZooDefs.Ids;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,7 +39,12 @@ public class JailerDriver implements Driver{
 		Driver d = DriverManager.getDriver(realUrl);
 		lastUnderlyingDriverRequested = d;
 		zooKeeper.exists(path, watcher);
+		createConnection(path);
 		return d.connect(realUrl, info);
+	}
+	
+	private void createConnection(String path) throws Exception{
+		zooKeeper.create(path + "/", "test".getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 	}
 	
 	public void dataSourceWatcher(Watcher watcher) throws Exception{
@@ -119,6 +126,7 @@ public class JailerDriver implements Driver{
 		lastUnderlyingDriverRequested = d;
 		info.putAll(this.info);
 		try {
+			createConnection(getPath(url));
 			return new JailerConnection(d.connect(realUrl, info), this);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
