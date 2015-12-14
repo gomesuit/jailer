@@ -1,6 +1,6 @@
 package jailer.zookeeper;
 
-import jailer.jdbc.JailerDataSource;
+import jailer.web.JailerDataSource;
 
 import java.io.IOException;
 import java.util.ArrayList;

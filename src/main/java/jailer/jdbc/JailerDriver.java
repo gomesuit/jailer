@@ -1,5 +1,7 @@
 package jailer.jdbc;
 
+import jailer.web.JailerDataSource;
+
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -32,9 +34,7 @@ public class JailerDriver implements Driver{
 	
 	public Connection reCreateConnection(String path) throws Exception{
 		this.jailerDataSource = getJailerDataSource(url);
-		for(JailerProperty jailerProperty : jailerDataSource.getPropertyList()){
-			info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
-		}
+		info.putAll(jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = DriverManager.getDriver(realUrl);
 		lastUnderlyingDriverRequested = d;
@@ -119,9 +119,7 @@ public class JailerDriver implements Driver{
 			if(this.jailerDataSource == null){
 				this.jailerDataSource = getJailerDataSource(url);
 			}
-			for(JailerProperty jailerProperty : jailerDataSource.getPropertyList()){
-				info.setProperty(jailerProperty.getKey(), jailerProperty.getValue());
-			}
+			info.putAll(jailerDataSource.getPropertyList());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

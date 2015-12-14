@@ -3,25 +3,22 @@ package jailer.web.zookeeper;
 import jailer.web.DataSourceIdForm;
 import jailer.web.JailerDataSource;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooDefs.Ids;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ZookeeperService {
+	@Autowired
 	private ZooKeeper zooKeeper;
 	
 	private String prefix = "/jailer";
-	
-	public ZookeeperService() throws IOException{
-		zooKeeper = new ZooKeeper("192.168.33.11:2181", 3000, null);
-	}
 	
 	public List<String> getDataSourceIdList() throws Exception{
 		return zooKeeper.getChildren(prefix, false);
