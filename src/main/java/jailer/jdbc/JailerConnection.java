@@ -27,7 +27,6 @@ public class JailerConnection implements Connection{
 	private JailerDriver driver;
 	private String connectionPath;
 	private int statementNumber = 0;
-	private boolean deadConnectionFlg = false;
 	
 	public JailerConnection(Connection realConnection, JailerDriver driver, String connectionPath) throws Exception{
 		this.realConnection = realConnection;
@@ -48,14 +47,6 @@ public class JailerConnection implements Connection{
 		return connectionPath;
 	}
 	
-	public boolean isDeadConnection(){
-		return deadConnectionFlg;
-	}
-	
-	public void becomeDeadConnection(){
-		deadConnectionFlg = true;
-	}
-	
 	private class TestWatcher implements Watcher{
 		
 		@Override
@@ -65,6 +56,15 @@ public class JailerConnection implements Connection{
 			try {
 				driver.dataSourceWatcher(new TestWatcher());
 				Connection newConnection = driver.reCreateConnection(event.getPath());
+				
+				newConnection.setAutoCommit(realConnection.getAutoCommit());
+				newConnection.setCatalog(realConnection.getCatalog());
+				newConnection.setClientInfo(realConnection.getClientInfo());
+				newConnection.setHoldability(realConnection.getHoldability());
+				//newConnection.setSchema(realConnection.getSchema());
+				//newConnection.setTransactionIsolation(realConnection.getTransactionIsolation());
+				newConnection.setTypeMap(realConnection.getTypeMap());
+				
 				Connection oldConnection = realConnection;
 				String oldConnectionPath = connectionPath;
 				realConnection = newConnection;
