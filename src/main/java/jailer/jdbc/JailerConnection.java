@@ -66,10 +66,16 @@ public class JailerConnection implements Connection{
 				driver.dataSourceWatcher(new TestWatcher());
 				Connection newConnection = driver.reCreateConnection(event.getPath());
 				Connection oldConnection = realConnection;
+				String oldConnectionPath = connectionPath;
 				realConnection = newConnection;
-				oldConnection.close();
-				driver.deleteConnection(connectionPath);
 				connectionPath = driver.createConnection(event.getPath());
+				
+				while(statementNumber != 0){
+					Thread.sleep(10);
+				}
+				
+				oldConnection.close();
+				driver.deleteConnection(oldConnectionPath);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -95,7 +101,6 @@ public class JailerConnection implements Connection{
 	@Override
 	public Statement createStatement() throws SQLException {
 		System.out.println("createStatement()");
-		//System.out.println(statementNumber);
 		return new JailerStatement(realConnection.createStatement(), this);
 	}
 
