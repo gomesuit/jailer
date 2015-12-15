@@ -1,4 +1,4 @@
-package jailer.web;
+package jailer.core;
 
 import java.util.HashMap;
 import java.util.Map;

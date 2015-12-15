@@ -1,4 +1,4 @@
-package jailer.jdbc;
+package jailer.jdbc.test;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

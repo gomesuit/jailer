@@ -1,4 +1,4 @@
-package jailer.jdbc;
+package jailer.jdbc.test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,11 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Test2 {
+public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		//Class.forName("net.sf.log4jdbc.sql.jdbcapi.DriverSpy");
-		Connection conn = DriverManager.getConnection("jdbc:log4jdbc:mysql://localhost/jailer", "jailer", "password");
+		//Class.forName("com.mysql.jdbc.Driver");
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/jailer", "jailer", "password");
 		
 		Statement stmt = conn.createStatement();
 		ResultSet rset = stmt.executeQuery("SELECT 1 FROM DUAL");

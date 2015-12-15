@@ -2,6 +2,7 @@ package jailer.web;
 
 import javax.servlet.http.HttpServletRequest;
 
+import jailer.core.JailerDataSource;
 import jailer.web.zookeeper.ZookeeperService;
 
 import org.springframework.beans.factory.annotation.Autowired;

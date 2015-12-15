@@ -1,7 +1,7 @@
 package jailer.web.zookeeper;
 
+import jailer.core.JailerDataSource;
 import jailer.web.DataSourceIdForm;
-import jailer.web.JailerDataSource;
 
 import java.util.List;
 
