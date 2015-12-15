@@ -8,9 +8,12 @@ import java.sql.Statement;
 
 public class JailerStatement implements Statement{
 	protected Statement realStatement;
+	private JailerConnection parentConnection;
 
-	public JailerStatement(Statement statement) {
+	public JailerStatement(Statement statement, JailerConnection connection) {
 		this.realStatement = statement;
+		this.parentConnection = connection;
+		parentConnection.addStatementNumber();
 	}
 
 	@Override
@@ -36,6 +39,7 @@ public class JailerStatement implements Statement{
 	@Override
 	public void close() throws SQLException {
 		realStatement.close();
+		parentConnection.reduceStatementNumber();
 	}
 
 	@Override

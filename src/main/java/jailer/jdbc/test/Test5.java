@@ -35,6 +35,7 @@ public class Test5 {
 				System.out.println(rset.getInt(1));
 			}
 			rset.close();
+			stmt.close();
 		}
 		
 		ds.close();

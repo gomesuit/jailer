@@ -23,8 +23,8 @@ import java.util.Map;
 public class JailerCallableStatement extends JailerPreparedStatement implements CallableStatement{
 	private CallableStatement realCallableStatement;
 	
-	public JailerCallableStatement(Statement statement) {
-		super(statement);
+	public JailerCallableStatement(Statement statement, JailerConnection connection) {
+		super(statement, connection);
 		// TODO Auto-generated constructor stub
 	}
 

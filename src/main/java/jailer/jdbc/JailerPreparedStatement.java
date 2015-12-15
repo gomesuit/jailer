@@ -25,8 +25,8 @@ import java.util.Calendar;
 public class JailerPreparedStatement extends JailerStatement implements PreparedStatement{
 	protected PreparedStatement realPreparedStatement;
 	
-	public JailerPreparedStatement(Statement statement) {
-		super(statement);
+	public JailerPreparedStatement(Statement statement, JailerConnection connection) {
+		super(statement, connection);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -26,6 +26,8 @@ public class JailerConnection implements Connection{
 	private Connection realConnection;
 	private JailerDriver driver;
 	private String connectionPath;
+	private int statementNumber = 0;
+	private boolean deadConnectionFlg = false;
 	
 	public JailerConnection(Connection realConnection, JailerDriver driver, String connectionPath) throws Exception{
 		this.realConnection = realConnection;
@@ -34,8 +36,24 @@ public class JailerConnection implements Connection{
 		driver.dataSourceWatcher(new TestWatcher());
 	}
 	
+	public void reduceStatementNumber(){
+		statementNumber--;
+	}
+	
+	public void addStatementNumber(){
+		statementNumber++;
+	}
+	
 	public String getConnectionPath() {
 		return connectionPath;
+	}
+	
+	public boolean isDeadConnection(){
+		return deadConnectionFlg;
+	}
+	
+	public void becomeDeadConnection(){
+		deadConnectionFlg = true;
 	}
 	
 	private class TestWatcher implements Watcher{
@@ -77,7 +95,8 @@ public class JailerConnection implements Connection{
 	@Override
 	public Statement createStatement() throws SQLException {
 		System.out.println("createStatement()");
-		return new JailerStatement(realConnection.createStatement());
+		//System.out.println(statementNumber);
+		return new JailerStatement(realConnection.createStatement(), this);
 	}
 
 	@Override
