@@ -17,12 +17,18 @@ import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
 public class JailerPreparedStatement extends JailerStatement implements PreparedStatement{
 	protected PreparedStatement realPreparedStatement;
+	
+	public JailerPreparedStatement(Statement statement) {
+		super(statement);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public ResultSet executeQuery() throws SQLException {

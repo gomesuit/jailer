@@ -14,6 +14,7 @@ import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -21,6 +22,11 @@ import java.util.Map;
 
 public class JailerCallableStatement extends JailerPreparedStatement implements CallableStatement{
 	private CallableStatement realCallableStatement;
+	
+	public JailerCallableStatement(Statement statement) {
+		super(statement);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public void registerOutParameter(int parameterIndex, int sqlType)

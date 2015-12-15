@@ -9,6 +9,10 @@ import java.sql.Statement;
 public class JailerStatement implements Statement{
 	protected Statement realStatement;
 
+	public JailerStatement(Statement statement) {
+		this.realStatement = statement;
+	}
+
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
 		return realStatement.unwrap(iface);
