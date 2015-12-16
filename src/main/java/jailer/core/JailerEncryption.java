@@ -1,6 +1,6 @@
 package jailer.core;
 
 public interface JailerEncryption {
-	public String encode(String str);
-	public String decoded(String str);
+	public byte[] encode(String src);
+	public String decoded(byte[] src);
 }

@@ -5,14 +5,18 @@ import org.apache.commons.codec.binary.Base64;
 public class JailerEncryptionImpl implements JailerEncryption{
 
 	@Override
-	public String encode(String str) {
+	public byte[] encode(String str) {
+		if(str == null) return null;
+		
 		byte[] encodedBytes = Base64.encodeBase64(str.getBytes());
-		return new String(encodedBytes);
+		return encodedBytes;
 	}
 
 	@Override
-	public String decoded(String str) {
-		byte[] decodedBytes = Base64.decodeBase64(str);
+	public String decoded(byte[] src) {
+		if(src == null) return null;
+		
+		byte[] decodedBytes = Base64.decodeBase64(src);
 		return new String(decodedBytes);
 	}
 
