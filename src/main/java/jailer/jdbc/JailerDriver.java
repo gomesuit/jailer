@@ -38,6 +38,7 @@ public class JailerDriver implements Driver{
 	
 	public Connection reCreateConnection(String path) throws Exception{
 		this.jailerDataSource = getJailerDataSource(url);
+		info.clear();
 		info.putAll(jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = DriverManager.getDriver(realUrl);
@@ -49,7 +50,10 @@ public class JailerDriver implements Driver{
 		InetAddress inetAddress = InetAddress.getLocalHost();
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setHost(inetAddress.getHostName());
+		connectionInfo.setIpAddress(inetAddress.getHostAddress());
 		connectionInfo.setSinceConnectTime(new Date());
+		connectionInfo.setConnectUrl(jailerDataSource.getUrl());
+		connectionInfo.setPropertyList(jailerDataSource.getPropertyList());
 		
 		String data = CommonUtil.objectToJson(connectionInfo);
 		

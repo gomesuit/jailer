@@ -76,4 +76,15 @@ public class JailerController {
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
 	}
+
+    @RequestMapping(value="/dataSourceParameter/remove", method=RequestMethod.POST)
+	private String removedataSourceParameter(@ModelAttribute DataSourceParameterForm form, HttpServletRequest request) throws Exception{
+    	JailerDataSource jailerDataSource = zookeeperService.getJailerDataSource(form.getDataSourceId());
+    	jailerDataSource.removeProperty(form.getKey());
+    	
+    	zookeeperService.registDataSource(jailerDataSource);
+		
+		String referer = request.getHeader("Referer");
+		return "redirect:" + referer;
+	}
 }

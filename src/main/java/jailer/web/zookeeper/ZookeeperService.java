@@ -24,7 +24,7 @@ public class ZookeeperService {
 	private String prefix = "jailer";
 	
 	public List<String> getDataSourceIdList() throws Exception{
-		return zooKeeper.getChildren(prefix, false);
+		return zooKeeper.getChildren(getRootPath(), false);
 	}
 	
 	public void registDataSourceId(DataSourceIdForm form) throws Exception{

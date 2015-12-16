@@ -11,6 +11,10 @@ public class JailerDataSource {
 	public void addProperty(String key, String value){
 		propertyList.put(key, value);
 	}
+
+	public void removeProperty(String key){
+		propertyList.remove(key);
+	}
 	
 	public String getUrl() {
 		return url;

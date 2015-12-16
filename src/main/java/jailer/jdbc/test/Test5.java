@@ -16,6 +16,7 @@ public class Test5 {
 		ds.setDriverClassName("jailer.jdbc.JailerDriver");
 		ds.setUrl("jdbc:jailer://192.168.33.11:2181/test?id=aaa&stage=bbb");
 		ds.setInitialSize(5);
+		ds.setMaxIdle(2);
 		
 		DataSource dataSource = ds;
 		Connection conn = dataSource.getConnection();
@@ -23,7 +24,7 @@ public class Test5 {
 		boolean flg = true;
 		while(flg){
 			try {
-				Thread.sleep(10);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
