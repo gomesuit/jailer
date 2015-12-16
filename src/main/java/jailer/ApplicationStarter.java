@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import jailer.core.JansibleZookeeper;
 
-import org.apache.zookeeper.ZooKeeper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,11 +12,6 @@ import org.springframework.context.annotation.Bean;
 public class ApplicationStarter {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(ApplicationStarter.class, args);
-	}
-	
-	@Bean
-	public ZooKeeper zooKeeper() throws IOException{
-		return new ZooKeeper("192.168.33.11:2181", 3000, null);
 	}
 	
 	@Bean
