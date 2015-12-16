@@ -57,13 +57,13 @@ public class JailerConnection implements Connection{
 				driver.dataSourceWatcher(new DataSourceWatcher());
 				Connection newConnection = driver.reCreateConnection(event.getPath());
 				
-				newConnection.setAutoCommit(realConnection.getAutoCommit());
-				newConnection.setCatalog(realConnection.getCatalog());
-				newConnection.setClientInfo(realConnection.getClientInfo());
-				newConnection.setHoldability(realConnection.getHoldability());
-				//newConnection.setSchema(realConnection.getSchema());
-				//newConnection.setTransactionIsolation(realConnection.getTransactionIsolation());
-				newConnection.setTypeMap(realConnection.getTypeMap());
+//				newConnection.setAutoCommit(realConnection.getAutoCommit());
+//				newConnection.setCatalog(realConnection.getCatalog());
+//				newConnection.setClientInfo(realConnection.getClientInfo());
+//				newConnection.setHoldability(realConnection.getHoldability());
+//				//newConnection.setSchema(realConnection.getSchema());
+//				//newConnection.setTransactionIsolation(realConnection.getTransactionIsolation());
+//				newConnection.setTypeMap(realConnection.getTypeMap());
 				
 				Connection oldConnection = realConnection;
 				String oldConnectionPath = connectionPath;
