@@ -32,7 +32,7 @@ public class JailerConnection implements Connection{
 		this.realConnection = realConnection;
 		this.driver = driver;
 		this.connectionPath = connectionPath;
-		driver.dataSourceWatcher(new TestWatcher());
+		driver.dataSourceWatcher(new DataSourceWatcher());
 	}
 	
 	public void reduceStatementNumber(){
@@ -47,14 +47,14 @@ public class JailerConnection implements Connection{
 		return connectionPath;
 	}
 	
-	private class TestWatcher implements Watcher{
+	private class DataSourceWatcher implements Watcher{
 		
 		@Override
 		public void process(WatchedEvent event) {
 			System.out.println("TestWatcher.process!");
 			//System.out.println(Thread.currentThread().getName());
 			try {
-				driver.dataSourceWatcher(new TestWatcher());
+				driver.dataSourceWatcher(new DataSourceWatcher());
 				Connection newConnection = driver.reCreateConnection(event.getPath());
 				
 				newConnection.setAutoCommit(realConnection.getAutoCommit());
@@ -100,7 +100,6 @@ public class JailerConnection implements Connection{
 
 	@Override
 	public Statement createStatement() throws SQLException {
-		System.out.println("createStatement()");
 		return new JailerStatement(realConnection.createStatement(), this);
 	}
 
@@ -141,8 +140,13 @@ public class JailerConnection implements Connection{
 
 	@Override
 	public void close() throws SQLException {
-		System.out.println("close()");
 		realConnection.close();
+		try {
+			driver.deleteConnection(connectionPath);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
