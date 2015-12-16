@@ -6,6 +6,7 @@
 	<title>sample page</title>
 </head>
 <body>
+	<div>URL登録</div>
 	<form action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceForm}" method="post">
 		<input type="hidden" th:field="*{dataSourceId}" />
 		<table border="1" rules="all">
@@ -16,9 +17,11 @@
 				<td><input type="text" th:field="*{url}" /></td>
 			</tr>
 		</table>
-		<input type="submit" value="Submit" />
+		<input type="submit" value="登録" />
 	</form>
 	
+	<br />
+	<div>パラメータ登録</div>
 	<form action="#" th:action="@{/dataSourceParameter/regist}" th:object="${dataSourceParameterForm}" method="post">
 		<input type="hidden" th:field="*{dataSourceId}" />
 		<table border="1" rules="all">
@@ -31,9 +34,11 @@
 				<td><input type="text" th:field="*{value}" /></td>
 			</tr>
 		</table>
-		<input type="submit" value="Submit" />
+		<input type="submit" value="登録" />
 	</form>
 	
+	<br />
+	<div>URL</div>
 	<table border="1" rules="all">
 		<tr>
 			<td>dataSourceId</td>
@@ -48,6 +53,9 @@
 			</td>
 		</tr>
 	</table>
+	
+	<br />
+	<div>登録済みパラメータ</div>
 	<table border="1" rules="all">
 		<tr>
 			<td>key</td>

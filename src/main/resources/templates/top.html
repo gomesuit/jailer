@@ -6,6 +6,7 @@
 	<title>sample page</title>
 </head>
 <body>
+	<div>登録</div>
 	<form action="#" th:action="@{/dataSourceId/regist}" th:object="${dataSourceIdForm}" method="post">
 		<table border="1" rules="all">
 			<tr>
@@ -18,6 +19,8 @@
 		<input type="submit" value="Submit" />
 	</form>
 	
+	<br />
+	<div>一覧</div>
 	<table border="1" rules="all">
 		<tr>
 			<td>dataSourceId</td>
