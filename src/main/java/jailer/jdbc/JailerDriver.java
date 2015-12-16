@@ -1,6 +1,7 @@
 package jailer.jdbc;
 
 import jailer.core.CommonUtil;
+import jailer.core.JansibleZookeeper;
 import jailer.core.model.ConnectionInfo;
 import jailer.core.model.JailerDataSource;
 
@@ -17,11 +18,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.ZooDefs.Ids;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +30,7 @@ public class JailerDriver implements Driver{
 	
 	private Properties info = new Properties();
 	private JailerDataSource jailerDataSource;
-	private ZooKeeper zooKeeper;
+	private JansibleZookeeper zooKeeper;
 	private String url;
 	
 	public Connection reCreateConnection(String path) throws Exception{
@@ -46,7 +43,7 @@ public class JailerDriver implements Driver{
 		return d.connect(realUrl, info);
 	}
 	
-	synchronized public String createConnection(String path) throws Exception{
+	public String createConnection(String path) throws Exception{
 		InetAddress inetAddress = InetAddress.getLocalHost();
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setHost(inetAddress.getHostName());
@@ -57,14 +54,14 @@ public class JailerDriver implements Driver{
 		
 		String data = CommonUtil.objectToJson(connectionInfo);
 		
-		String connectionPath = zooKeeper.create(path + "/", data.getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+		String connectionPath = zooKeeper.createDataForEphemeralSequential(path + "/", data);
 		System.out.println("createConnection : " + connectionPath);
 		return connectionPath;
 	}
 	
-	synchronized public void deleteConnection(String path) throws Exception{
+	public void deleteConnection(String path) throws Exception{
 		System.out.println("deleteConnection : " + path);
-		zooKeeper.delete(path, -1);
+		zooKeeper.delete(path);
 	}
 	
 	public void dataSourceWatcher(Watcher watcher) throws Exception{
@@ -76,23 +73,13 @@ public class JailerDriver implements Driver{
 			this.url = url;
 			String host = getHost(url);
 			int port = getPort(url);
-			zooKeeper = new ZooKeeper(host + ":" + port, 3000, new DefaultWatcher());
+			zooKeeper = new JansibleZookeeper(host, port);
 		}
 		String path = getPath(url);
-		byte strByte[] = zooKeeper.getData(path, null, null);
-		String result = new String(strByte, "UTF-8");
+		String result = zooKeeper.getData(path);
 		ObjectMapper mapper = new ObjectMapper();
 		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
 		return jailerDataSource;
-	}
-	
-	private class DefaultWatcher implements Watcher{
-
-		@Override
-		public void process(WatchedEvent event) {
-			System.out.println("DefaultWatcher.process!");
-		}
-		
 	}
 	
 	private String getPath(String url) throws Exception{
