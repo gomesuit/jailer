@@ -37,7 +37,7 @@ public class Test5 {
 			rset.close();
 			stmt.close();
 		}
-		
+		conn.close();
 		ds.close();
 	}
 
