@@ -1,7 +1,10 @@
 package jailer.jdbc;
 
+import jailer.core.CommonUtil;
+import jailer.core.model.ConnectionInfo;
 import jailer.core.model.JailerDataSource;
 
+import java.net.InetAddress;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -9,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -42,7 +46,14 @@ public class JailerDriver implements Driver{
 	}
 	
 	synchronized public String createConnection(String path) throws Exception{
-		String connectionPath = zooKeeper.create(path + "/", "test".getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+		InetAddress inetAddress = InetAddress.getLocalHost();
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setHost(inetAddress.getHostName());
+		connectionInfo.setSinceConnectTime(new Date());
+		
+		String data = CommonUtil.objectToJson(connectionInfo);
+		
+		String connectionPath = zooKeeper.create(path + "/", data.getBytes("UTF-8"), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 		System.out.println("createConnection : " + connectionPath);
 		return connectionPath;
 	}

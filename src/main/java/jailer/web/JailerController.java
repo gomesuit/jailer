@@ -50,7 +50,7 @@ public class JailerController {
     	dataSourceParameterForm.setDataSourceId(jailerDataSource.getDataSourceId());
     	model.addAttribute("dataSourceParameterForm", dataSourceParameterForm);
     	
-    	model.addAttribute("connectionList", zookeeperService.getConnectionList());
+    	model.addAttribute("connectionList", zookeeperService.getConnectionList(jailerDataSource.getDataSourceId()));
     	
     	return "detail";
     }

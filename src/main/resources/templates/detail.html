@@ -75,11 +75,19 @@
 	<div>コネクション一覧</div>
 	<table border="1" rules="all">
 		<tr>
-			<td>connection</td>
+			<td>id</td>
+			<td>接続元ホスト名</td>
+			<td>接続開始日時</td>
 		</tr>
 		<tr th:each="connection : ${connectionList}">
 			<td>
-				<div th:text="${connection}" />
+				<div th:text="${connection.key}" />
+			</td>
+			<td>
+				<div th:text="${connection.value.host}" />
+			</td>
+			<td>
+				<div th:text="${#dates.format(connection.value.sinceConnectTime, 'yyyy/MM/dd HH:mm:ss')}" />
 			</td>
 		</tr>
 	</table>

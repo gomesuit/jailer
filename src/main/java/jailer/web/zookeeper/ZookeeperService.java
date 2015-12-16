@@ -1,35 +1,37 @@
 package jailer.web.zookeeper;
 
+import jailer.core.CommonUtil;
+import jailer.core.model.ConnectionInfo;
 import jailer.core.model.JailerDataSource;
 import jailer.web.DataSourceIdForm;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ZookeeperService {
 	@Autowired
 	private ZooKeeper zooKeeper;
 	
-	private String prefix = "/jailer";
+	private String prefix = "jailer";
 	
 	public List<String> getDataSourceIdList() throws Exception{
 		return zooKeeper.getChildren(prefix, false);
 	}
 	
 	public void registDataSourceId(DataSourceIdForm form) throws Exception{
-		String path = prefix + "/" + form.getDataSourceId();
+		String path = getDataSourcePath(form.getDataSourceId());
 		JailerDataSource jailerDataSource = new JailerDataSource();
 		jailerDataSource.setDataSourceId(form.getDataSourceId());
-		String json = objectToJson(jailerDataSource);
+		String json = CommonUtil.objectToJson(jailerDataSource);
 		createDataForPersistent(path, json);
 	}
 	
@@ -38,31 +40,52 @@ public class ZookeeperService {
 	}
 	
 	public void registDataSource(JailerDataSource jailerDataSource) throws Exception{
-		String path = prefix + "/" + jailerDataSource.getDataSourceId();
-		String json = objectToJson(jailerDataSource);
+		String path = getDataSourcePath(jailerDataSource.getDataSourceId());
+		String json = CommonUtil.objectToJson(jailerDataSource);
 		zooKeeper.setData(path, json.getBytes("UTF-8"), -1);
 	}
 	
 	public JailerDataSource getJailerDataSource(String dataSourceId) throws Exception{
-		String path = prefix + "/" + dataSourceId;
+		String path = getDataSourcePath(dataSourceId);
 		byte[] strByte = zooKeeper.getData(path, false, null);
 		String result = new String(strByte, "UTF-8");
-		return jsonToObject(result, JailerDataSource.class);
+		return CommonUtil.jsonToObject(result, JailerDataSource.class);
 	}
 	
-	public List<String> getConnectionList() throws Exception{
-		//List<String> connectionList = new ArrayList<>();
-		return zooKeeper.getChildren("/jailer/test", false);
+	public Map<String, ConnectionInfo> getConnectionList(String dataSourceId) throws Exception{
+		Map<String, ConnectionInfo> connectionList = new LinkedHashMap<>();
+		String dataSourcePath = getDataSourcePath(dataSourceId);
+		
+		boolean success = false;
+		
+		while(!success){		
+			try{
+				for(String connectionId : zooKeeper.getChildren(dataSourcePath, false)){
+					String connectionPath = appendPath(dataSourcePath, connectionId);
+					byte[] strByte = zooKeeper.getData(connectionPath, false, null);
+					String result = new String(strByte, "UTF-8");
+					connectionList.put(connectionId, CommonUtil.jsonToObject(result, ConnectionInfo.class));
+				}
+				success = true;
+			}catch(KeeperException e){
+				e.printStackTrace();
+				connectionList.clear();
+			}
+		}
+		
+		return connectionList;
 	}
 	
-	public String objectToJson(Object obj) throws Exception{
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(obj);
+	private String getRootPath(){
+		return "/" + prefix;
 	}
 	
-	public <T> T jsonToObject(String json, Class<T> clazz) throws Exception{
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(json, clazz);
+	private String getDataSourcePath(String dataSourceId){
+		return appendPath(getRootPath(), dataSourceId);
+	}
+	
+	private String appendPath(String srcPath, String node){
+		return srcPath + "/" + node;
 	}
 
 }
