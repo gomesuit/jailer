@@ -1,6 +1,6 @@
 package jailer.jdbc;
 
-import jailer.core.JailerDataSource;
+import jailer.core.model.JailerDataSource;
 
 import java.net.URI;
 import java.sql.Connection;

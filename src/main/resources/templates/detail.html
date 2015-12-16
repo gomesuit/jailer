@@ -70,5 +70,18 @@
 			</td>
 		</tr>
 	</table>
+	
+	<br />
+	<div>コネクション一覧</div>
+	<table border="1" rules="all">
+		<tr>
+			<td>connection</td>
+		</tr>
+		<tr th:each="connection : ${connectionList}">
+			<td>
+				<div th:text="${connection}" />
+			</td>
+		</tr>
+	</table>
 </body>
 </html>

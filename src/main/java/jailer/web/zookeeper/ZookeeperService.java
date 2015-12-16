@@ -1,8 +1,9 @@
 package jailer.web.zookeeper;
 
-import jailer.core.JailerDataSource;
+import jailer.core.model.JailerDataSource;
 import jailer.web.DataSourceIdForm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.zookeeper.CreateMode;
@@ -47,6 +48,11 @@ public class ZookeeperService {
 		byte[] strByte = zooKeeper.getData(path, false, null);
 		String result = new String(strByte, "UTF-8");
 		return jsonToObject(result, JailerDataSource.class);
+	}
+	
+	public List<String> getConnectionList() throws Exception{
+		//List<String> connectionList = new ArrayList<>();
+		return zooKeeper.getChildren("/jailer/test", false);
 	}
 	
 	public String objectToJson(Object obj) throws Exception{

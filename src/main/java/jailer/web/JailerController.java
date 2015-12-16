@@ -2,7 +2,7 @@ package jailer.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import jailer.core.JailerDataSource;
+import jailer.core.model.JailerDataSource;
 import jailer.web.zookeeper.ZookeeperService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class ModuleController {
+public class JailerController {
 	@Autowired
 	private ZookeeperService zookeeperService;
 	
@@ -49,6 +49,8 @@ public class ModuleController {
     	DataSourceParameterForm dataSourceParameterForm = new DataSourceParameterForm();
     	dataSourceParameterForm.setDataSourceId(jailerDataSource.getDataSourceId());
     	model.addAttribute("dataSourceParameterForm", dataSourceParameterForm);
+    	
+    	model.addAttribute("connectionList", zookeeperService.getConnectionList());
     	
     	return "detail";
     }

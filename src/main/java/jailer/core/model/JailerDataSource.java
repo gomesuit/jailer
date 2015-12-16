@@ -1,4 +1,4 @@
-package jailer.core;
+package jailer.core.model;
 
 import java.util.HashMap;
 import java.util.Map;
