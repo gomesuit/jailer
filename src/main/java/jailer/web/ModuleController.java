@@ -23,7 +23,7 @@ public class ModuleController {
     	model.addAttribute("dataSourceIdForm", new DataSourceIdForm());
     	model.addAttribute("dataSourceIdList", zookeeperService.getDataSourceIdList());
     	
-        return "sample";
+        return "top";
     }
 
     @RequestMapping(value="/dataSourceId/regist", method=RequestMethod.POST)
@@ -50,7 +50,7 @@ public class ModuleController {
     	dataSourceParameterForm.setDataSourceId(jailerDataSource.getDataSourceId());
     	model.addAttribute("dataSourceParameterForm", dataSourceParameterForm);
     	
-    	return "sample2";
+    	return "detail";
     }
 
     @RequestMapping(value="/dataSource/regist", method=RequestMethod.POST)
