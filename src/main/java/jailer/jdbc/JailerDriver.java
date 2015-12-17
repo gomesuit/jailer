@@ -37,8 +37,11 @@ public class JailerDriver implements Driver{
 		info.clear();
 		info.putAll(jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
-		Driver d = DriverManager.getDriver(realUrl);
-		lastUnderlyingDriverRequested = d;
+		//Driver d = DriverManager.getDriver(realUrl);
+		Driver d = getUnderlyingDriver(realUrl);
+		if (d != null) {
+			lastUnderlyingDriverRequested = d;
+		}
 		Connection newConnection = d.connect(realUrl, info);
 		return newConnection;
 	}
