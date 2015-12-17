@@ -6,7 +6,6 @@ import jailer.core.model.DataSourceKey;
 import jailer.core.model.GroupKey;
 import jailer.core.model.JailerDataSource;
 import jailer.core.model.ServiceKey;
-import jailer.web.zookeeper.ZookeeperService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class JailerController {
 	@Autowired
-	private ZookeeperService zookeeperService;
+	private JailerService jailerService;
 	
 
 	@RequestMapping("/")
 	public String top(Model model){
-		model.addAttribute("serviceList", zookeeperService.getServiceList());
+		model.addAttribute("serviceList", jailerService.getServiceList());
 		
 		return "top";
 	}
@@ -39,7 +38,7 @@ public class JailerController {
 
 		model.addAttribute("service", service);
     	model.addAttribute("groupKey", new GroupKey());
-		model.addAttribute("groupList", zookeeperService.getGroupList(key));
+		model.addAttribute("groupList", jailerService.getGroupList(key));
 		
 		return "service";
 	}
@@ -56,14 +55,14 @@ public class JailerController {
 
     	model.addAttribute("groupKey", key);
     	model.addAttribute("dataSourceKey", new DataSourceKey());
-    	model.addAttribute("dataSourceIdList", zookeeperService.getDataSourceIdList(key));
+    	model.addAttribute("dataSourceIdList", jailerService.getDataSourceIdList(key));
     	
         return "group";
     }
 
     @RequestMapping(value="/dataSource/regist", method=RequestMethod.POST)
 	private String registDataSourceId(@ModelAttribute DataSourceKey key, HttpServletRequest request) throws Exception{
-    	zookeeperService.registDataSourceId(key);
+    	jailerService.registDataSourceId(key);
 		
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
@@ -71,7 +70,7 @@ public class JailerController {
 
     @RequestMapping(value="/group/regist", method=RequestMethod.POST)
 	private String registGroup(@ModelAttribute GroupKey key, HttpServletRequest request) throws Exception{
-    	zookeeperService.registGroup(key);
+    	jailerService.registGroup(key);
 		
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
@@ -91,7 +90,7 @@ public class JailerController {
 
     	model.addAttribute("dataSourceKey", key);
     	
-    	JailerDataSource jailerDataSource = zookeeperService.getJailerDataSource(key);
+    	JailerDataSource jailerDataSource = jailerService.getJailerDataSource(key);
     	model.addAttribute("jailerDataSource", jailerDataSource);
     	
     	DataSourceForm dataSourceForm = new DataSourceForm(key);
@@ -101,17 +100,17 @@ public class JailerController {
     	DataSourceParameterForm dataSourceParameterForm = new DataSourceParameterForm(key);
     	model.addAttribute("dataSourceParameterForm", dataSourceParameterForm);
     	
-    	model.addAttribute("connectionList", zookeeperService.getConnectionList(key));
+    	model.addAttribute("connectionList", jailerService.getConnectionList(key));
     	
     	return "datasource";
     }
 
     @RequestMapping(value="/dataSource/update", method=RequestMethod.POST)
 	private String registRole(@ModelAttribute DataSourceForm form, HttpServletRequest request) throws Exception{
-    	JailerDataSource jailerDataSource = zookeeperService.getJailerDataSource(form);
+    	JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
     	jailerDataSource.setUrl(form.getUrl());
     	
-    	zookeeperService.registDataSource(form, jailerDataSource);
+    	jailerService.registDataSource(form, jailerDataSource);
 		
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
@@ -119,10 +118,10 @@ public class JailerController {
 
     @RequestMapping(value="/dataSourceParameter/regist", method=RequestMethod.POST)
 	private String registdataSourceParameter(@ModelAttribute DataSourceParameterForm form, HttpServletRequest request) throws Exception{
-    	JailerDataSource jailerDataSource = zookeeperService.getJailerDataSource(form);
+    	JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
     	jailerDataSource.addProperty(form.getKey(), form.getValue());
     	
-    	zookeeperService.registDataSource(form, jailerDataSource);
+    	jailerService.registDataSource(form, jailerDataSource);
 		
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
@@ -130,10 +129,10 @@ public class JailerController {
 
     @RequestMapping(value="/dataSourceParameter/remove", method=RequestMethod.POST)
 	private String removedataSourceParameter(@ModelAttribute DataSourceParameterForm form, HttpServletRequest request) throws Exception{
-    	JailerDataSource jailerDataSource = zookeeperService.getJailerDataSource(form);
+    	JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
     	jailerDataSource.removeProperty(form.getKey());
     	
-    	zookeeperService.registDataSource(form, jailerDataSource);
+    	jailerService.registDataSource(form, jailerDataSource);
 		
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;

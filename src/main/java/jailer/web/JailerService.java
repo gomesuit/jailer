@@ -1,4 +1,4 @@
-package jailer.web.zookeeper;
+package jailer.web;
 
 import jailer.core.CommonUtil;
 import jailer.core.model.ConnectionInfo;
@@ -7,6 +7,7 @@ import jailer.core.model.DataSourceKey;
 import jailer.core.model.GroupKey;
 import jailer.core.model.JailerDataSource;
 import jailer.core.model.ServiceKey;
+import jailer.web.zookeeper.ZookeeperRepository;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Service
-public class ZookeeperService {
+public class JailerService {
 	@Autowired
 	private ZookeeperRepository repository;
 	
