@@ -3,12 +3,16 @@ package jailer.core.model;
 import java.util.Date;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ConnectionInfo {
 	private String host;
 	private String ipAddress;
 	private Date sinceConnectTime;
 	private String connectUrl;
 	private Map<String, String> propertyList;
+	private Map<String, String> optionalParam;
 	
 	public String getHost() {
 		return host;
@@ -39,5 +43,11 @@ public class ConnectionInfo {
 	}
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
+	}
+	public Map<String, String> getOptionalParam() {
+		return optionalParam;
+	}
+	public void setOptionalParam(Map<String, String> optionalParam) {
+		this.optionalParam = optionalParam;
 	}
 }

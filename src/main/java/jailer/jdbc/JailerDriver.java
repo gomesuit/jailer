@@ -47,6 +47,7 @@ public class JailerDriver implements Driver{
 		connectionInfo.setSinceConnectTime(new Date());
 		connectionInfo.setConnectUrl(jailerDataSource.getUrl());
 		connectionInfo.setPropertyList(jailerDataSource.getPropertyList());
+		connectionInfo.setOptionalParam(JailerJdbcURIManager.getParameterMap(jailerJdbcURI));
 		
 		ConnectionKey connectionKey = repository.registConnection(key, connectionInfo);
 		System.out.println("createConnection : " + connectionKey.getConnectionId());
