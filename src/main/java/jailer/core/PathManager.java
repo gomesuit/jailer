@@ -2,7 +2,6 @@ package jailer.core;
 
 public class PathManager {
 	private static final String prefix = "jailer";
-
 	
 	public static String getRootPath(){
 		return appendPath("", prefix);
@@ -12,7 +11,11 @@ public class PathManager {
 		return appendPath(getRootPath(), dataSourceId);
 	}
 	
-	public static String appendPath(String srcPath, String node){
+	private static String appendPath(String srcPath, String node){
 		return srcPath + "/" + node;
+	}
+	
+	public static String getConnectionPath(String dataSourceId, String connectionId){
+		return appendPath(getDataSourcePath(dataSourceId), connectionId);
 	}
 }

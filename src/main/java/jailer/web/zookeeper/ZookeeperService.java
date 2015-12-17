@@ -53,7 +53,7 @@ public class ZookeeperService {
 		while(!success){		
 			try{
 				for(String connectionId : zooKeeper.getChildren(dataSourcePath)){
-					String connectionPath = PathManager.appendPath(dataSourcePath, connectionId);
+					String connectionPath = PathManager.getConnectionPath(dataSourceId, connectionId);
 					String result = zooKeeper.getData(connectionPath);
 					connectionList.put(connectionId, CommonUtil.jsonToObject(result, ConnectionInfo.class));
 				}
