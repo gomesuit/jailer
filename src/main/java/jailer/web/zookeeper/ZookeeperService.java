@@ -1,5 +1,6 @@
 package jailer.web.zookeeper;
 
+import jailer.core.CommonUtil;
 import jailer.core.model.ConnectionInfo;
 import jailer.core.model.ConnectionKey;
 import jailer.core.model.DataSourceKey;
@@ -15,6 +16,8 @@ import org.apache.zookeeper.KeeperException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 @Service
 public class ZookeeperService {
 	@Autowired
@@ -24,10 +27,23 @@ public class ZookeeperService {
 		return repository.getDataSourceList(key);
 	}
 	
-	public void registDataSourceId(DataSourceKey key) throws Exception{
+	public void registDataSourceId(DataSourceKey key) throws JsonProcessingException, KeeperException, InterruptedException{
+		String uuid = CommonUtil.getRandomUUID();
+		
 		JailerDataSource jailerDataSource = new JailerDataSource();
 		jailerDataSource.setDataSourceId(key.getDataSourceId());
+		jailerDataSource.setUuid(uuid);
 		repository.registDataSource(key, jailerDataSource);
+		
+		try {
+			repository.registUUID(uuid, key);
+		} catch (KeeperException e) {
+			e.printStackTrace();
+			repository.deleteDataSource(key);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			repository.deleteDataSource(key);
+		}
 	}
 	
 	public void registDataSource(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception{

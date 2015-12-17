@@ -7,6 +7,7 @@ public class JailerDataSource {
 	private String dataSourceId;
 	private String url;
 	private Map<String, String> propertyList = new HashMap<>();
+	private String uuid;
 	
 	public void addProperty(String key, String value){
 		propertyList.put(key, value);
@@ -37,5 +38,13 @@ public class JailerDataSource {
 
 	public void setDataSourceId(String dataSourceId) {
 		this.dataSourceId = dataSourceId;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

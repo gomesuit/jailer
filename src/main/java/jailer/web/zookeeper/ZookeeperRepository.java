@@ -106,4 +106,18 @@ public class ZookeeperRepository {
 			return new ArrayList<>();
 		}
 	}
+	
+	public void registUUID(String uuid, DataSourceKey key) throws JsonProcessingException, KeeperException, InterruptedException{
+		String data = CommonUtil.objectToJson(key);
+		zooKeeper.createDataForPersistent(PathManager.getUuidPath(uuid), data);
+	}
+	
+	public void deleteUUID(String uuid) throws InterruptedException, KeeperException{
+		zooKeeper.delete(PathManager.getUuidPath(uuid));
+	}
+	
+	public DataSourceKey getDataSourceKey(String uuid) throws KeeperException, InterruptedException, JsonParseException, JsonMappingException, IOException{
+		String result = zooKeeper.getData(PathManager.getUuidPath(uuid));
+		return CommonUtil.jsonToObject(result, DataSourceKey.class);
+	}
 }

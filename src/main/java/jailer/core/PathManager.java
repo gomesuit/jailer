@@ -47,4 +47,8 @@ public class PathManager {
 	public static String getConnectionPath(ConnectionKey key){
 		return appendPath(getDataSourcePath(key), key.getConnectionId());
 	}
+	
+	public static String getUuidPath(String uuid){
+		return appendPath(getUrlManagerPath(), uuid);
+	}
 }
