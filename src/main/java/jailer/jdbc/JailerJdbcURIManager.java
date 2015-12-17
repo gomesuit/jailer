@@ -14,31 +14,31 @@ public class JailerJdbcURIManager {
 		return url.substring(Prefix.length());
 	}
 
-	private static URI getUri(String url) throws URISyntaxException {
+	public static URI getUri(String url) throws URISyntaxException {
 		String strUri = getExcludePrefix(url);
 		return new URI(strUri);
 	}
 	
-	public static String getHost(String url) throws URISyntaxException {
-		return getUri(url).getHost();
+	public static String getHost(URI uri){
+		return uri.getHost();
 	}
 	
-	public static int getPort(String url) throws URISyntaxException {
-		return getUri(url).getPort();
+	public static int getPort(URI uri){
+		return uri.getPort();
 	}
 	
-	public static String getPath(String url) throws URISyntaxException {
-		return PathManager.getRootPath() + getUri(url).getPath();
+	public static String getPath(URI uri){
+		return PathManager.getRootPath() + uri.getPath();
 	}
 	
-	public static String getUUID(String url) throws URISyntaxException {
-		return getUri(url).getPath().substring(1);
+	public static String getUUID(URI uri){
+		return uri.getPath().substring(1);
 	}
 	
-	public static Map<String, String> getParameterMap(String url) throws URISyntaxException {
+	public static Map<String, String> getParameterMap(URI uri){
 		Map<String, String> resultMap = new HashMap<>();
 		
-		String query = getUri(url).getQuery();
+		String query = uri.getQuery();
 		
 		if(query == null){
 			return resultMap;

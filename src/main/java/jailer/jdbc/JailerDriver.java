@@ -6,6 +6,7 @@ import jailer.core.model.DataSourceKey;
 import jailer.core.model.JailerDataSource;
 
 import java.net.InetAddress;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -25,7 +26,7 @@ public class JailerDriver implements Driver{
 	
 	private Properties info = new Properties();
 	private JailerDataSource jailerDataSource;
-	private String jailerJdbcURI;
+	private URI jailerJdbcURI;
 	
 	private JdbcRepository repository;
 	
@@ -36,7 +37,8 @@ public class JailerDriver implements Driver{
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = DriverManager.getDriver(realUrl);
 		lastUnderlyingDriverRequested = d;
-		return d.connect(realUrl, info);
+		Connection newConnection = d.connect(realUrl, info);
+		return newConnection;
 	}
 	
 	public ConnectionKey createConnection(DataSourceKey key) throws Exception{
@@ -63,14 +65,14 @@ public class JailerDriver implements Driver{
 		repository.watchDataSource(key, watcher);
 	}
 	
-	private JailerDataSource getJailerDataSource(String url) throws Exception{
-		if(this.jailerJdbcURI == null || !this.jailerJdbcURI.equals(url)){
-			this.jailerJdbcURI = url;
-			String host = JailerJdbcURIManager.getHost(url);
-			int port = JailerJdbcURIManager.getPort(url);
+	private JailerDataSource getJailerDataSource(URI uri) throws Exception{
+		if(this.jailerJdbcURI == null || !this.jailerJdbcURI.equals(uri)){
+			this.jailerJdbcURI = uri;
+			String host = JailerJdbcURIManager.getHost(jailerJdbcURI);
+			int port = JailerJdbcURIManager.getPort(jailerJdbcURI);
 			repository = new JdbcRepository(host, port);
 		}
-		DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(url));
+		DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(jailerJdbcURI));
 		JailerDataSource jailerDataSource = repository.getJailerDataSource(key);
 		return jailerDataSource;
 	}
@@ -81,9 +83,6 @@ public class JailerDriver implements Driver{
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -91,7 +90,7 @@ public class JailerDriver implements Driver{
 	public Connection connect(String url, Properties info) throws SQLException {
 		try {
 			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(url);
+				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
 			info.putAll(jailerDataSource.getPropertyList());
 		} catch (Exception e) {
@@ -103,7 +102,7 @@ public class JailerDriver implements Driver{
 		lastUnderlyingDriverRequested = d;
 		info.putAll(this.info);
 		try {
-			DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(url));
+			DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(jailerJdbcURI));
 			ConnectionKey connectionKey = createConnection(key);
 			return new JailerConnection(d.connect(realUrl, info), this, connectionKey);
 		} catch (Exception e) {
@@ -117,7 +116,7 @@ public class JailerDriver implements Driver{
 	public boolean acceptsURL(String url) throws SQLException {
 		try {
 			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(url);
+				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -136,7 +135,7 @@ public class JailerDriver implements Driver{
 	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
 		try {
 			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(url);
+				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -175,7 +174,7 @@ public class JailerDriver implements Driver{
 	private Driver getUnderlyingDriver(String url) throws SQLException{
 		try {
 			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(url);
+				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
