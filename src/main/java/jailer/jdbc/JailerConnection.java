@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 
@@ -30,7 +31,7 @@ public class JailerConnection implements Connection{
 	private int statementNumber = 0;
 	private ConnectionKey key;
 	
-	public JailerConnection(Connection realConnection, JailerDriver driver, ConnectionKey key) throws Exception{
+	public JailerConnection(Connection realConnection, JailerDriver driver, ConnectionKey key) throws KeeperException, InterruptedException{
 		this.realConnection = realConnection;
 		this.driver = driver;
 		this.key = key;

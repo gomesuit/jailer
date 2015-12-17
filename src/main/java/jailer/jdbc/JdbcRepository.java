@@ -50,7 +50,7 @@ public class JdbcRepository {
 		zooKeeper.delete(PathManager.getConnectionPath(key));
 	}
 	
-	public void watchDataSource(DataSourceKey key, Watcher watcher) throws KeeperException, InterruptedException, Exception{
+	public void watchDataSource(DataSourceKey key, Watcher watcher) throws KeeperException, InterruptedException{
 		zooKeeper.exists(PathManager.getDataSourcePath(key), watcher);
 	}
 	

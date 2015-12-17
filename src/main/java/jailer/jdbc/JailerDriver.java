@@ -5,6 +5,7 @@ import jailer.core.model.ConnectionKey;
 import jailer.core.model.DataSourceKey;
 import jailer.core.model.JailerDataSource;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.sql.Connection;
@@ -18,6 +19,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
 
 public class JailerDriver implements Driver{
@@ -30,7 +32,7 @@ public class JailerDriver implements Driver{
 	
 	private JdbcRepository repository;
 	
-	public Connection reCreateConnection() throws Exception{
+	public Connection reCreateConnection() throws IOException, KeeperException, InterruptedException, SQLException{
 		this.jailerDataSource = getJailerDataSource(jailerJdbcURI);
 		info.clear();
 		info.putAll(jailerDataSource.getPropertyList());
@@ -61,11 +63,11 @@ public class JailerDriver implements Driver{
 		repository.deleteConnection(key);
 	}
 	
-	public void dataSourceWatcher(DataSourceKey key, Watcher watcher) throws Exception{
+	public void dataSourceWatcher(DataSourceKey key, Watcher watcher) throws KeeperException, InterruptedException{
 		repository.watchDataSource(key, watcher);
 	}
 	
-	private JailerDataSource getJailerDataSource(URI uri) throws Exception{
+	private JailerDataSource getJailerDataSource(URI uri) throws IOException, KeeperException, InterruptedException{
 		if(this.jailerJdbcURI == null || !this.jailerJdbcURI.equals(uri)){
 			this.jailerJdbcURI = uri;
 			String host = JailerJdbcURIManager.getHost(jailerJdbcURI);
@@ -81,8 +83,7 @@ public class JailerDriver implements Driver{
 		try {
 			DriverManager.registerDriver(new JailerDriver());
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw (RuntimeException) new RuntimeException("could not register jailerjdbc driver!").initCause(e);
 		}
 	}
 
@@ -94,8 +95,7 @@ public class JailerDriver implements Driver{
 			}
 			info.putAll(jailerDataSource.getPropertyList());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SQLException(e);
 		}
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = DriverManager.getDriver(realUrl);
@@ -106,9 +106,7 @@ public class JailerDriver implements Driver{
 			ConnectionKey connectionKey = createConnection(key);
 			return new JailerConnection(d.connect(realUrl, info), this, connectionKey);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new SQLException();
+			throw new SQLException(e);
 		}
 	}
 
@@ -119,8 +117,7 @@ public class JailerDriver implements Driver{
 				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SQLException(e);
 		}
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = getUnderlyingDriver(realUrl);
@@ -138,8 +135,7 @@ public class JailerDriver implements Driver{
 				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SQLException(e);
 		}
 		return lastUnderlyingDriverRequested.getPropertyInfo(url, info);
 	}
@@ -177,8 +173,7 @@ public class JailerDriver implements Driver{
 				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SQLException(e);
 		}
 		String realUrl = jailerDataSource.getUrl();
 		Enumeration<Driver> e = DriverManager.getDrivers();
