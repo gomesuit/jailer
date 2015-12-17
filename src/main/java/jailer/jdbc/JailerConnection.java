@@ -1,5 +1,7 @@
 package jailer.jdbc;
 
+import jailer.core.model.ConnectionKey;
+
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -25,14 +27,14 @@ import org.apache.zookeeper.Watcher;
 public class JailerConnection implements Connection{
 	private Connection realConnection;
 	private JailerDriver driver;
-	private String connectionPath;
 	private int statementNumber = 0;
+	private ConnectionKey key;
 	
-	public JailerConnection(Connection realConnection, JailerDriver driver, String connectionPath) throws Exception{
+	public JailerConnection(Connection realConnection, JailerDriver driver, ConnectionKey key) throws Exception{
 		this.realConnection = realConnection;
 		this.driver = driver;
-		this.connectionPath = connectionPath;
-		driver.dataSourceWatcher(new DataSourceWatcher());
+		this.key = key;
+		driver.dataSourceWatcher(key, new DataSourceWatcher());
 	}
 	
 	public void reduceStatementNumber(){
@@ -41,10 +43,6 @@ public class JailerConnection implements Connection{
 	
 	public void addStatementNumber(){
 		statementNumber++;
-	}
-	
-	public String getConnectionPath() {
-		return connectionPath;
 	}
 	
 	private class DataSourceWatcher implements Watcher{
@@ -61,8 +59,9 @@ public class JailerConnection implements Connection{
 			System.out.println("TestWatcher.process!");
 			//System.out.println(Thread.currentThread().getName());
 			try {
-				driver.dataSourceWatcher(new DataSourceWatcher());
-				Connection newConnection = driver.reCreateConnection(event.getPath());
+				driver.dataSourceWatcher(key, new DataSourceWatcher());
+				Connection newConnection = driver.reCreateConnection();
+				ConnectionKey newKey = driver.createConnection(key);
 				
 //				newConnection.setAutoCommit(realConnection.getAutoCommit());
 //				newConnection.setCatalog(realConnection.getCatalog());
@@ -73,16 +72,16 @@ public class JailerConnection implements Connection{
 //				newConnection.setTypeMap(realConnection.getTypeMap());
 				
 				Connection oldConnection = realConnection;
-				String oldConnectionPath = connectionPath;
+				ConnectionKey oldKey = key;
 				realConnection = newConnection;
-				connectionPath = driver.createConnection(event.getPath());
+				key = newKey;
 				
 				while(statementNumber != 0){
 					Thread.sleep(10);
 				}
 				
 				oldConnection.close();
-				driver.deleteConnection(oldConnectionPath);
+				driver.deleteConnection(oldKey);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -149,7 +148,7 @@ public class JailerConnection implements Connection{
 	public void close() throws SQLException {
 		realConnection.close();
 		try {
-			driver.deleteConnection(connectionPath);
+			driver.deleteConnection(key);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

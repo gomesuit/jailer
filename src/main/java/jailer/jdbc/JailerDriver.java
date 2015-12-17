@@ -1,13 +1,11 @@
 package jailer.jdbc;
 
-import jailer.core.CommonUtil;
-import jailer.core.JansibleZookeeper;
-import jailer.core.PathManager;
 import jailer.core.model.ConnectionInfo;
+import jailer.core.model.ConnectionKey;
+import jailer.core.model.DataSourceKey;
 import jailer.core.model.JailerDataSource;
 
 import java.net.InetAddress;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -21,20 +19,18 @@ import java.util.logging.Logger;
 
 import org.apache.zookeeper.Watcher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class JailerDriver implements Driver{
-	private static final String Prefix = "jdbc:";
 
 	private Driver lastUnderlyingDriverRequested;
 	
 	private Properties info = new Properties();
 	private JailerDataSource jailerDataSource;
-	private JansibleZookeeper zooKeeper;
-	private String url;
+	private String jailerJdbcURI;
 	
-	public Connection reCreateConnection(String path) throws Exception{
-		this.jailerDataSource = getJailerDataSource(url);
+	private JdbcRepository repository;
+	
+	public Connection reCreateConnection() throws Exception{
+		this.jailerDataSource = getJailerDataSource(jailerJdbcURI);
 		info.clear();
 		info.putAll(jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
@@ -43,7 +39,7 @@ public class JailerDriver implements Driver{
 		return d.connect(realUrl, info);
 	}
 	
-	public String createConnection(String path) throws Exception{
+	public ConnectionKey createConnection(DataSourceKey key) throws Exception{
 		InetAddress inetAddress = InetAddress.getLocalHost();
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setHost(inetAddress.getHostName());
@@ -52,55 +48,30 @@ public class JailerDriver implements Driver{
 		connectionInfo.setConnectUrl(jailerDataSource.getUrl());
 		connectionInfo.setPropertyList(jailerDataSource.getPropertyList());
 		
-		String data = CommonUtil.objectToJson(connectionInfo);
-		
-		String connectionPath = zooKeeper.createDataForEphemeralSequential(path + "/", data);
-		System.out.println("createConnection : " + connectionPath);
-		return connectionPath;
+		ConnectionKey connectionKey = repository.registConnection(key, connectionInfo);
+		System.out.println("createConnection : " + connectionKey.getConnectionId());
+		return connectionKey;
 	}
 	
-	public void deleteConnection(String path) throws Exception{
-		System.out.println("deleteConnection : " + path);
-		zooKeeper.delete(path);
+	public void deleteConnection(ConnectionKey key) throws Exception{
+		System.out.println("deleteConnection : " + key.getConnectionId());
+		repository.deleteConnection(key);
 	}
 	
-	public void dataSourceWatcher(Watcher watcher) throws Exception{
-		zooKeeper.exists(getPath(url), watcher);
+	public void dataSourceWatcher(DataSourceKey key, Watcher watcher) throws Exception{
+		repository.watchDataSource(key, watcher);
 	}
 	
 	private JailerDataSource getJailerDataSource(String url) throws Exception{
-		if(this.url == null || !this.url.equals(url)){
-			this.url = url;
-			String host = getHost(url);
-			int port = getPort(url);
-			zooKeeper = new JansibleZookeeper(host, port);
+		if(this.jailerJdbcURI == null || !this.jailerJdbcURI.equals(url)){
+			this.jailerJdbcURI = url;
+			String host = JailerJdbcURIManager.getHost(url);
+			int port = JailerJdbcURIManager.getPort(url);
+			repository = new JdbcRepository(host, port);
 		}
-		String path = getPath(url);
-		String result = zooKeeper.getData(path);
-		ObjectMapper mapper = new ObjectMapper();
-		JailerDataSource jailerDataSource = mapper.readValue(result, JailerDataSource.class);
+		DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(url));
+		JailerDataSource jailerDataSource = repository.getJailerDataSource(key);
 		return jailerDataSource;
-	}
-	
-	private String getPath(String url) throws Exception{
-		return PathManager.getRootPath() + getUri(url).getPath();
-	}
-	
-	private String getHost(String url) throws Exception{
-		return getUri(url).getHost();
-	}
-	
-	private int getPort(String url) throws Exception{
-		return getUri(url).getPort();
-	}
-	
-	private String getExcludePrefix(String url){
-		return url.substring(Prefix.length());
-	}
-	
-	private URI getUri(String url) throws Exception{
-		String strUri = getExcludePrefix(url);
-		return new URI(strUri);
 	}
 	
 	static{
@@ -131,8 +102,9 @@ public class JailerDriver implements Driver{
 		lastUnderlyingDriverRequested = d;
 		info.putAll(this.info);
 		try {
-			String connectionPath = createConnection(getPath(url));
-			return new JailerConnection(d.connect(realUrl, info), this, connectionPath);
+			DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(url));
+			ConnectionKey connectionKey = createConnection(key);
+			return new JailerConnection(d.connect(realUrl, info), this, connectionKey);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

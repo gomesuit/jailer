@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jailer.core.CommonUtil;
-import jailer.core.JansibleZookeeper;
+import jailer.core.JailerZookeeper;
 import jailer.core.PathManager;
 import jailer.core.model.ConnectionInfo;
 import jailer.core.model.ConnectionKey;
@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @Repository
 public class ZookeeperRepository {
 	@Autowired
-	private JansibleZookeeper zooKeeper;
+	private JailerZookeeper zooKeeper;
 	
 	public List<String> getServiceList() {
 		try {

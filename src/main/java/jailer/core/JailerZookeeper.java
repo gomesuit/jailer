@@ -11,17 +11,17 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooDefs.Ids;
 
-public class JansibleZookeeper {
+public class JailerZookeeper {
 	private final String host;
 	private final int port;
 	private final ZooKeeper zooKeeper;
 	private static final Charset charset = StandardCharsets.UTF_8;
 	
-	public JansibleZookeeper(String host, int port) throws IOException{
+	public JailerZookeeper(String host, int port) throws IOException{
 		this(host, port, new DefaultWatcher());
 	}
 	
-	public JansibleZookeeper(String host, int port, Watcher watcher) throws IOException{
+	public JailerZookeeper(String host, int port, Watcher watcher) throws IOException{
 		this.host = host;
 		this.port = port;
 		this.zooKeeper = new ZooKeeper(host + ":" + port, 3000, watcher);

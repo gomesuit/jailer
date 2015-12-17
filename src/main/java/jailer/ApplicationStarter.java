@@ -2,7 +2,7 @@ package jailer;
 
 import java.io.IOException;
 
-import jailer.core.JansibleZookeeper;
+import jailer.core.JailerZookeeper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +15,7 @@ public class ApplicationStarter {
 	}
 	
 	@Bean
-	public JansibleZookeeper JansibleZookeeper() throws IOException{
-		return new JansibleZookeeper("192.168.33.11", 2181);
+	public JailerZookeeper JansibleZookeeper() throws IOException{
+		return new JailerZookeeper("192.168.33.11", 2181);
 	}
 }
