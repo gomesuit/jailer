@@ -24,6 +24,10 @@ public class JdbcRepository {
 		this.zooKeeper = new JailerZookeeper(host, port);
 	}
 	
+	public void close() throws InterruptedException{
+		zooKeeper.close();
+	}
+	
 	public JailerDataSource getJailerDataSource(DataSourceKey key) throws JsonParseException, JsonMappingException, IOException, KeeperException, InterruptedException{
 		String result = zooKeeper.getData(PathManager.getDataSourcePath(key));
 		return CommonUtil.jsonToObject(result, JailerDataSource.class);

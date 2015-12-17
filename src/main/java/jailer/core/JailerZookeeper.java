@@ -67,4 +67,10 @@ public class JailerZookeeper {
 	public void exists(String path, Watcher watcher) throws KeeperException, InterruptedException {
 		zooKeeper.exists(path, watcher);
 	}
+	
+	public void close() throws InterruptedException{
+		zooKeeper.close();
+	}
+	
+	
 }
