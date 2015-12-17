@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta content="ja" http-equiv="Content-Language" />
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+	<title>sample page</title>
+</head>
+<body>
+	<div>登録</div>
+	<form action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceKey}" method="post">
+		<input type="hidden" th:name="serviceId" th:value="${groupKey.serviceId}" />
+		<input type="hidden" th:name="groupId" th:value="${groupKey.groupId}" />
+		<table border="1" rules="all">
+			<tr>
+				<td>dataSourceId</td>
+			</tr>
+			<tr>
+				<td><input type="text" th:field="*{dataSourceId}" /></td>
+			</tr>
+		</table>
+		<input type="submit" value="Submit" />
+	</form>
+	
+	<br />
+	<div>一覧</div>
+	<table border="1" rules="all">
+		<tr>
+			<td>dataSourceId</td>
+		</tr>
+		<tr th:each="dataSourceId : ${dataSourceIdList}">
+			<td>
+				<a th:href="@{/dataSource(service=${groupKey.serviceId}, group=${groupKey.groupId}, dataSource=${dataSourceId})}" th:text="${dataSourceId}" />
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

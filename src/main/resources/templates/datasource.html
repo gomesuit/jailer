@@ -7,8 +7,10 @@
 </head>
 <body>
 	<div>URL登録</div>
-	<form action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceForm}" method="post">
-		<input type="hidden" th:field="*{dataSourceId}" />
+	<form action="#" th:action="@{/dataSource/update}" th:object="${dataSourceForm}" method="post">
+		<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+		<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
+		<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
 		<table border="1" rules="all">
 			<tr>
 				<td>url</td>
@@ -23,7 +25,9 @@
 	<br />
 	<div>パラメータ登録</div>
 	<form action="#" th:action="@{/dataSourceParameter/regist}" th:object="${dataSourceParameterForm}" method="post">
-		<input type="hidden" th:field="*{dataSourceId}" />
+		<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+		<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
+		<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
 		<table border="1" rules="all">
 			<tr>
 				<td>key</td>

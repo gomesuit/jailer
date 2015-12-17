@@ -1,8 +1,18 @@
 package jailer.web;
 
-public class DataSourceParameterForm extends DataSourceIdForm{
+import jailer.core.model.DataSourceKey;
+
+public class DataSourceParameterForm extends DataSourceKey{
 	private String key;
 	private String value;
+	
+	public DataSourceParameterForm(){}
+	
+	public DataSourceParameterForm(DataSourceKey key){
+		this.setServiceId(key.getServiceId());
+		this.setGroupId(key.getGroupId());
+		this.setDataSourceId(key.getDataSourceId());
+	}
 	
 	public String getKey() {
 		return key;

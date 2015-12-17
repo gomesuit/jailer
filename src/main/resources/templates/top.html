@@ -6,28 +6,14 @@
 	<title>sample page</title>
 </head>
 <body>
-	<div>登録</div>
-	<form action="#" th:action="@{/dataSourceId/regist}" th:object="${dataSourceIdForm}" method="post">
-		<table border="1" rules="all">
-			<tr>
-				<td>dataSourceId</td>
-			</tr>
-			<tr>
-				<td><input type="text" th:field="*{dataSourceId}" /></td>
-			</tr>
-		</table>
-		<input type="submit" value="Submit" />
-	</form>
-	
-	<br />
-	<div>一覧</div>
+	<div>サービス一覧</div>
 	<table border="1" rules="all">
 		<tr>
-			<td>dataSourceId</td>
+			<td>service</td>
 		</tr>
-		<tr th:each="dataSourceId : ${dataSourceIdList}">
+		<tr th:each="service : ${serviceList}">
 			<td>
-				<a th:href="@{/dataSource/view(dataSourceId=${dataSourceId})}" th:text="${dataSourceId}" />
+				<a th:href="@{/service(service=${service})}" th:text="${service}" />
 			</td>
 		</tr>
 	</table>

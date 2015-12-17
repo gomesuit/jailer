@@ -1,7 +1,8 @@
 package jailer.core;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.zookeeper.CreateMode;
@@ -14,7 +15,7 @@ public class JansibleZookeeper {
 	private final String host;
 	private final int port;
 	private final ZooKeeper zooKeeper;
-	private static final String charsetName = "UTF-8";
+	private static final Charset charset = StandardCharsets.UTF_8;
 	
 	public JansibleZookeeper(String host, int port) throws IOException{
 		this(host, port, new DefaultWatcher());
@@ -26,17 +27,17 @@ public class JansibleZookeeper {
 		this.zooKeeper = new ZooKeeper(host + ":" + port, 3000, watcher);
 	}
 
-	public void createDataForPersistent(String path, String data) throws Exception{
-		zooKeeper.create(path, data.getBytes(charsetName), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+	public void createDataForPersistent(String path, String data) throws KeeperException, InterruptedException{
+		zooKeeper.create(path, data.getBytes(charset), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 	}
 	
-	public String getData(String path) throws KeeperException, InterruptedException, UnsupportedEncodingException{
+	public String getData(String path) throws KeeperException, InterruptedException{
 		byte[] strByte = zooKeeper.getData(path, false, null);
-		return new String(strByte, charsetName);
+		return new String(strByte, charset);
 	}
 	
-	public void setData(String path, String data) throws UnsupportedEncodingException, KeeperException, InterruptedException{
-		zooKeeper.setData(path, data.getBytes(charsetName), -1);
+	public void setData(String path, String data) throws KeeperException, InterruptedException{
+		zooKeeper.setData(path, data.getBytes(charset), -1);
 	}
 	
 	public List<String> getChildren(String path) throws KeeperException, InterruptedException{
@@ -51,12 +52,12 @@ public class JansibleZookeeper {
 		return port;
 	}
 
-	public void createDataForEphemeral(String path, String data) throws UnsupportedEncodingException, KeeperException, InterruptedException {
-		zooKeeper.create(path, data.getBytes(charsetName), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+	public void createDataForEphemeral(String path, String data) throws KeeperException, InterruptedException {
+		zooKeeper.create(path, data.getBytes(charset), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 	}
 
-	public String createDataForEphemeralSequential(String path, String data) throws UnsupportedEncodingException, KeeperException, InterruptedException {
-		return zooKeeper.create(path, data.getBytes(charsetName), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+	public String createDataForEphemeralSequential(String path, String data) throws KeeperException, InterruptedException {
+		return zooKeeper.create(path, data.getBytes(charset), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 	}
 
 	public void delete(String path) throws InterruptedException, KeeperException {

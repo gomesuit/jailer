@@ -1,11 +1,11 @@
 package jailer.web.zookeeper;
 
-import jailer.core.CommonUtil;
-import jailer.core.JansibleZookeeper;
-import jailer.core.PathManager;
 import jailer.core.model.ConnectionInfo;
+import jailer.core.model.ConnectionKey;
+import jailer.core.model.DataSourceKey;
+import jailer.core.model.GroupKey;
 import jailer.core.model.JailerDataSource;
-import jailer.web.DataSourceIdForm;
+import jailer.core.model.ServiceKey;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,44 +18,41 @@ import org.springframework.stereotype.Service;
 @Service
 public class ZookeeperService {
 	@Autowired
-	private JansibleZookeeper zooKeeper;
+	private ZookeeperRepository repository;
 	
-	public List<String> getDataSourceIdList() throws Exception{
-		return zooKeeper.getChildren(PathManager.getRootPath());
+	public List<String> getDataSourceIdList(GroupKey key) throws Exception{
+		return repository.getDataSourceList(key);
 	}
 	
-	public void registDataSourceId(DataSourceIdForm form) throws Exception{
-		String path = PathManager.getDataSourcePath(form.getDataSourceId());
+	public void registDataSourceId(DataSourceKey key) throws Exception{
 		JailerDataSource jailerDataSource = new JailerDataSource();
-		jailerDataSource.setDataSourceId(form.getDataSourceId());
-		String json = CommonUtil.objectToJson(jailerDataSource);
-		zooKeeper.createDataForPersistent(path, json);
+		jailerDataSource.setDataSourceId(key.getDataSourceId());
+		repository.registDataSource(key, jailerDataSource);
 	}
 	
-	public void registDataSource(JailerDataSource jailerDataSource) throws Exception{
-		String path = PathManager.getDataSourcePath(jailerDataSource.getDataSourceId());
-		String json = CommonUtil.objectToJson(jailerDataSource);
-		zooKeeper.setData(path, json);
+	public void registDataSource(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception{
+		repository.updateDataSource(key, jailerDataSource);
 	}
 	
-	public JailerDataSource getJailerDataSource(String dataSourceId) throws Exception{
-		String path = PathManager.getDataSourcePath(dataSourceId);
-		String result = zooKeeper.getData(path);
-		return CommonUtil.jsonToObject(result, JailerDataSource.class);
+	public JailerDataSource getJailerDataSource(DataSourceKey key) throws Exception{
+		return repository.getDataSource(key);
 	}
 	
-	public Map<String, ConnectionInfo> getConnectionList(String dataSourceId) throws Exception{
+	public Map<String, ConnectionInfo> getConnectionList(DataSourceKey key) throws Exception{
 		Map<String, ConnectionInfo> connectionList = new LinkedHashMap<>();
-		String dataSourcePath = PathManager.getDataSourcePath(dataSourceId);
 		
 		boolean success = false;
 		
 		while(!success){		
 			try{
-				for(String connectionId : zooKeeper.getChildren(dataSourcePath)){
-					String connectionPath = PathManager.getConnectionPath(dataSourceId, connectionId);
-					String result = zooKeeper.getData(connectionPath);
-					connectionList.put(connectionId, CommonUtil.jsonToObject(result, ConnectionInfo.class));
+				for(String connectionId : repository.getConnectionList(key)){
+					ConnectionKey connectionKey = new ConnectionKey();
+					connectionKey.setServiceId(key.getServiceId());
+					connectionKey.setGroupId(key.getGroupId());
+					connectionKey.setDataSourceId(key.getDataSourceId());
+					connectionKey.setConnectionId(connectionId);
+					
+					connectionList.put(connectionId, repository.getConnectionInfo(connectionKey));
 				}
 				success = true;
 			}catch(KeeperException e){
@@ -65,6 +62,19 @@ public class ZookeeperService {
 		}
 		
 		return connectionList;
+	}
+
+	
+	public void registGroup(GroupKey key) throws KeeperException, InterruptedException{
+		repository.registGroup(key);
+	}
+	
+	public List<String> getGroupList(ServiceKey key){
+		return repository.getGroupList(key);
+	}
+
+	public List<String> getServiceList() {
+		return repository.getServiceList();
 	}
 
 }
