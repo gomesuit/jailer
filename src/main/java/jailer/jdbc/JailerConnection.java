@@ -51,6 +51,13 @@ public class JailerConnection implements Connection{
 		
 		@Override
 		public void process(WatchedEvent event) {
+			try {
+				if(realConnection.isClosed()) return;
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			System.out.println("TestWatcher.process!");
 			//System.out.println(Thread.currentThread().getName());
 			try {
