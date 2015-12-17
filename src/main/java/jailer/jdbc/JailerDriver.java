@@ -2,6 +2,7 @@ package jailer.jdbc;
 
 import jailer.core.CommonUtil;
 import jailer.core.JansibleZookeeper;
+import jailer.core.PathManager;
 import jailer.core.model.ConnectionInfo;
 import jailer.core.model.JailerDataSource;
 
@@ -24,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JailerDriver implements Driver{
 	private static final String Prefix = "jdbc:";
-	private static final String zookeeperRoot = "/jailer";
 
 	private Driver lastUnderlyingDriverRequested;
 	
@@ -83,7 +83,7 @@ public class JailerDriver implements Driver{
 	}
 	
 	private String getPath(String url) throws Exception{
-		return zookeeperRoot + getUri(url).getPath();
+		return PathManager.getRootPath() + getUri(url).getPath();
 	}
 	
 	private String getHost(String url) throws Exception{
