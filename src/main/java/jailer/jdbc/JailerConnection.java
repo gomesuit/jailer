@@ -56,9 +56,10 @@ public class JailerConnection implements Connection{
 				e.printStackTrace();
 			}
 			
-			System.out.println("TestWatcher.process!");
+			System.out.println("DataSourceWatcher.process!");
 			//System.out.println(Thread.currentThread().getName());
 			try {
+				//TODO existsとgetDataを分けるとイベントを取り逃す可能性がある
 				driver.dataSourceWatcher(key, new DataSourceWatcher());
 				Connection newConnection = driver.reCreateConnection();
 				ConnectionKey newKey = driver.createConnection(key);

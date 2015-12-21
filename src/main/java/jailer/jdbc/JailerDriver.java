@@ -8,6 +8,7 @@ import jailer.core.model.JailerDataSource;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -21,6 +22,8 @@ import java.util.logging.Logger;
 
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class JailerDriver implements Driver{
 
@@ -46,19 +49,32 @@ public class JailerDriver implements Driver{
 		return newConnection;
 	}
 	
-	public ConnectionKey createConnection(DataSourceKey key) throws Exception{
-		InetAddress inetAddress = InetAddress.getLocalHost();
+	public ConnectionKey createConnection(DataSourceKey key) throws JsonProcessingException, KeeperException, InterruptedException{
+		ConnectionInfo connectionInfo = createConnectionInfo(jailerDataSource, jailerJdbcURI);
+		
+		ConnectionKey connectionKey = repository.registConnection(key, connectionInfo);
+		System.out.println("createConnection : " + connectionKey.getConnectionId());
+		return connectionKey;
+	}
+	
+	private ConnectionInfo createConnectionInfo(JailerDataSource jailerDataSource, URI jailerJdbcURI){
 		ConnectionInfo connectionInfo = new ConnectionInfo();
-		connectionInfo.setHost(inetAddress.getHostName());
-		connectionInfo.setIpAddress(inetAddress.getHostAddress());
 		connectionInfo.setSinceConnectTime(new Date());
 		connectionInfo.setConnectUrl(jailerDataSource.getUrl());
 		connectionInfo.setPropertyList(jailerDataSource.getPropertyList());
 		connectionInfo.setOptionalParam(JailerJdbcURIManager.getParameterMap(jailerJdbcURI));
 		
-		ConnectionKey connectionKey = repository.registConnection(key, connectionInfo);
-		System.out.println("createConnection : " + connectionKey.getConnectionId());
-		return connectionKey;
+		try {
+			InetAddress inetAddress = InetAddress.getLocalHost();
+			connectionInfo.setHost(inetAddress.getHostName());
+			connectionInfo.setIpAddress(inetAddress.getHostAddress());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			connectionInfo.setHost("UnknownHost");
+			connectionInfo.setIpAddress("UnknownHostAddress");
+		}
+		
+		return connectionInfo;
 	}
 	
 	public void deleteConnection(ConnectionKey key) throws Exception{
