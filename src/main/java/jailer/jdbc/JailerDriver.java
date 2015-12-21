@@ -19,7 +19,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.zookeeper.Watcher;
+import org.apache.curator.framework.api.CuratorWatcher;
 
 public class JailerDriver implements Driver{
 
@@ -36,7 +36,6 @@ public class JailerDriver implements Driver{
 		info.clear();
 		info.putAll(jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
-		//Driver d = DriverManager.getDriver(realUrl);
 		Driver d = getUnderlyingDriver(realUrl);
 		if (d != null) {
 			lastUnderlyingDriverRequested = d;
@@ -78,7 +77,7 @@ public class JailerDriver implements Driver{
 		repository.deleteConnection(key);
 	}
 	
-	public void dataSourceWatcher(DataSourceKey key, Watcher watcher) throws Exception{
+	public void dataSourceWatcher(DataSourceKey key, CuratorWatcher watcher) throws Exception{
 		repository.watchDataSource(key, watcher);
 	}
 	

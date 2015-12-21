@@ -1,15 +1,14 @@
 package jailer.jdbc;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.Watcher;
 
 import jailer.core.CommonUtil;
 import jailer.core.PathManager;
@@ -22,13 +21,13 @@ public class JdbcRepositoryCurator {
 	private final CuratorFramework client;
 	private static final Charset charset = StandardCharsets.UTF_8;
 	
-	public JdbcRepositoryCurator(String host, int port) throws IOException{
+	public JdbcRepositoryCurator(String host, int port){
 		RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
 		this.client = CuratorFrameworkFactory.newClient(host + ":" + port, retryPolicy);
 		this.client.start();
 	}
 	
-	public void close() throws InterruptedException{
+	public void close(){
 		client.close();
 	}
 	
@@ -51,10 +50,10 @@ public class JdbcRepositoryCurator {
 	}
 	
 	public void deleteConnection(ConnectionKey key) throws Exception{
-		client.delete().forPath(PathManager.getConnectionPath(key));
+		client.delete().guaranteed().forPath(PathManager.getConnectionPath(key));
 	}
 	
-	public void watchDataSource(DataSourceKey key, Watcher watcher) throws Exception{
+	public void watchDataSource(DataSourceKey key, CuratorWatcher watcher) throws Exception{
 		client.checkExists().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
 	}
 	
