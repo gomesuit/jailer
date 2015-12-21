@@ -23,6 +23,7 @@ import java.util.concurrent.Executor;
 
 import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher.Event.EventType;
 
 public class JailerConnection implements Connection{
 	private Connection realConnection;
@@ -51,31 +52,49 @@ public class JailerConnection implements Connection{
 		public void process(WatchedEvent event) throws Exception {
 			if(realConnection.isClosed()) return;
 
-			System.out.println("DataSourceWatcher.process!");
-			//TODO existsとgetDataを分けるとイベントを取り逃す可能性がある
-			driver.dataSourceWatcher(key, new DataSourceWatcher());
-			Connection newConnection = driver.reCreateConnection();
-			ConnectionKey newKey = driver.createConnection(key);
+			System.out.println("DataSourceWatcher.process! : " + event.getType());
 			
-//			newConnection.setAutoCommit(realConnection.getAutoCommit());
-//			newConnection.setCatalog(realConnection.getCatalog());
-//			newConnection.setClientInfo(realConnection.getClientInfo());
-//			newConnection.setHoldability(realConnection.getHoldability());
-//			//newConnection.setSchema(realConnection.getSchema());
-//			//newConnection.setTransactionIsolation(realConnection.getTransactionIsolation());
-//			newConnection.setTypeMap(realConnection.getTypeMap());
-			
-			Connection oldConnection = realConnection;
-			ConnectionKey oldKey = key;
-			realConnection = newConnection;
-			key = newKey;
-			
-			while(statementNumber != 0){
-				Thread.sleep(10);
+			//TODO コネクションがあるのにノードがない場合、ノードを生成する処理
+			if(event.getType() == EventType.None){
+				System.out.println("Path : " + event.getPath());
+				System.out.println("key : " + key.getConnectionId());
+				System.out.println("EventType : " + event.getType());
+				System.out.println("KeeperState : " + event.getState());
+				//driver.dataSourceWatcher(key, new DataSourceWatcher());
+				if(!realConnection.isClosed()){
+					driver.repairConnectionNode(key);
+					driver.dataSourceWatcher(key, new DataSourceWatcher());
+				}
 			}
 			
-			oldConnection.close();
-			driver.deleteConnection(oldKey);
+			if(event.getType() == EventType.NodeDataChanged){
+				
+				//TODO existsとgetDataを分けるとイベントを取り逃す可能性がある
+				driver.dataSourceWatcher(key, new DataSourceWatcher());
+				Connection newConnection = driver.reCreateConnection();
+				ConnectionKey newKey = driver.createConnection(key);
+				
+//				newConnection.setAutoCommit(realConnection.getAutoCommit());
+//				newConnection.setCatalog(realConnection.getCatalog());
+//				newConnection.setClientInfo(realConnection.getClientInfo());
+//				newConnection.setHoldability(realConnection.getHoldability());
+//				//newConnection.setSchema(realConnection.getSchema());
+//				//newConnection.setTransactionIsolation(realConnection.getTransactionIsolation());
+//				newConnection.setTypeMap(realConnection.getTypeMap());
+				
+				Connection oldConnection = realConnection;
+				ConnectionKey oldKey = key;
+				realConnection = newConnection;
+				key = newKey;
+				
+				while(statementNumber != 0){
+					Thread.sleep(10);
+				}
+				
+				oldConnection.close();
+				driver.deleteConnection(oldKey);
+				
+			}
 		}
 		
 	}
@@ -140,7 +159,6 @@ public class JailerConnection implements Connection{
 		try {
 			driver.deleteConnection(key);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
