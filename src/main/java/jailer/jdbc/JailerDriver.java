@@ -5,7 +5,6 @@ import jailer.core.model.ConnectionKey;
 import jailer.core.model.DataSourceKey;
 import jailer.core.model.JailerDataSource;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -20,10 +19,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class JailerDriver implements Driver{
 
@@ -33,9 +29,9 @@ public class JailerDriver implements Driver{
 	private JailerDataSource jailerDataSource;
 	private URI jailerJdbcURI;
 	
-	private JdbcRepository repository;
+	private JdbcRepositoryCurator repository;
 	
-	public Connection reCreateConnection() throws IOException, KeeperException, InterruptedException, SQLException{
+	public Connection reCreateConnection() throws Exception{
 		this.jailerDataSource = getJailerDataSource(jailerJdbcURI);
 		info.clear();
 		info.putAll(jailerDataSource.getPropertyList());
@@ -49,7 +45,7 @@ public class JailerDriver implements Driver{
 		return newConnection;
 	}
 	
-	public ConnectionKey createConnection(DataSourceKey key) throws JsonProcessingException, KeeperException, InterruptedException{
+	public ConnectionKey createConnection(DataSourceKey key) throws Exception{
 		ConnectionInfo connectionInfo = createConnectionInfo(jailerDataSource, jailerJdbcURI);
 		
 		ConnectionKey connectionKey = repository.registConnection(key, connectionInfo);
@@ -82,16 +78,16 @@ public class JailerDriver implements Driver{
 		repository.deleteConnection(key);
 	}
 	
-	public void dataSourceWatcher(DataSourceKey key, Watcher watcher) throws KeeperException, InterruptedException{
+	public void dataSourceWatcher(DataSourceKey key, Watcher watcher) throws Exception{
 		repository.watchDataSource(key, watcher);
 	}
 	
-	private JailerDataSource getJailerDataSource(URI uri) throws IOException, KeeperException, InterruptedException{
+	private JailerDataSource getJailerDataSource(URI uri) throws Exception{
 		if(this.jailerJdbcURI == null || !this.jailerJdbcURI.equals(uri)){
 			this.jailerJdbcURI = uri;
 			String host = JailerJdbcURIManager.getHost(jailerJdbcURI);
 			int port = JailerJdbcURIManager.getPort(jailerJdbcURI);
-			repository = new JdbcRepository(host, port);
+			repository = new JdbcRepositoryCurator(host, port);
 		}
 		DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(jailerJdbcURI));
 		JailerDataSource jailerDataSource = repository.getJailerDataSource(key);

@@ -31,7 +31,7 @@ public class JailerConnection implements Connection{
 	private int statementNumber = 0;
 	private ConnectionKey key;
 	
-	public JailerConnection(Connection realConnection, JailerDriver driver, ConnectionKey key) throws KeeperException, InterruptedException{
+	public JailerConnection(Connection realConnection, JailerDriver driver, ConnectionKey key) throws Exception{
 		this.realConnection = realConnection;
 		this.driver = driver;
 		this.key = key;
