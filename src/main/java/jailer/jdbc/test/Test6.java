@@ -23,7 +23,7 @@ public class Test6 {
 		boolean flg = true;
 		while(flg){
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
