@@ -37,4 +37,9 @@ public class ServiceKey {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceKey [serviceId=" + serviceId + "]";
+	}
+
 }

@@ -35,4 +35,9 @@ public class GroupKey extends ServiceKey{
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "GroupKey [groupId=" + groupId + "]";
+	}
 }

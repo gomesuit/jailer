@@ -54,13 +54,17 @@ public class JailerConnection implements Connection{
 			if(realConnection.isClosed()) return;
 
 			System.out.println("DataSourceWatcher.process! : " + event.getType());
+			System.out.println("Path : " + event.getPath());
+			System.out.println("key : " + key.getConnectionId());
+			System.out.println("EventType : " + event.getType());
+			System.out.println("KeeperState : " + event.getState());
 			
 			if(event.getType() == EventType.NodeDataChanged){
 				
 				//TODO existsとgetDataを分けるとイベントを取り逃す可能性がある
-				driver.dataSourceWatcher(key, new DataSourceWatcher());
 				Connection newConnection = driver.reCreateConnection();
 				ConnectionKey newKey = driver.createConnection(key);
+				driver.dataSourceWatcher(newKey, new DataSourceWatcher());
 				
 //				newConnection.setAutoCommit(realConnection.getAutoCommit());
 //				newConnection.setCatalog(realConnection.getCatalog());

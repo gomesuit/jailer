@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.curator.CuratorConnectionLossException;
 import org.apache.curator.RetryPolicy;
@@ -89,7 +90,7 @@ public class JdbcRepositoryCurator {
 		return connectionKey;
 	}
 
-	private Map<ConnectionKey, ConnectionInfo> connectionKeyMap = new HashMap<>();
+	private Map<ConnectionKey, ConnectionInfo> connectionKeyMap = new ConcurrentHashMap<>();
 	
 	public void repairConnectionNode(ConnectionKey key, ConnectionInfo info) throws Exception{
 		String data = CommonUtil.objectToJson(info);
@@ -99,9 +100,12 @@ public class JdbcRepositoryCurator {
 	public void deleteConnection(ConnectionKey key) throws Exception{
 		client.delete().guaranteed().forPath(PathManager.getConnectionPath(key));
 		connectionKeyMap.remove(key);
+		System.out.println("remove前" + SessionExpiredWatcherMap);
+		SessionExpiredWatcherMap.remove(key);
+		System.out.println("remove後" + SessionExpiredWatcherMap);
 	}
 	
-	private Map<ConnectionKey, CuratorWatcher> SessionExpiredWatcherMap = new HashMap<>();
+	private Map<ConnectionKey, CuratorWatcher> SessionExpiredWatcherMap = new ConcurrentHashMap<>();
 	
 	public void watchDataSource(ConnectionKey key, CuratorWatcher watcher) throws Exception{
 		try{
@@ -128,6 +132,7 @@ public class JdbcRepositoryCurator {
 		public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
 			client.checkExists().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
 			SessionExpiredWatcherMap.put(key, watcher);
+			System.out.println(SessionExpiredWatcherMap);
 		}
 		
 	}
@@ -148,7 +153,7 @@ public class JdbcRepositoryCurator {
 			System.out.println("CuratorListener event.getType() : " + event.getType());
 			System.out.println("CuratorListener event.getPath() : " + event.getPath());
 			System.out.println("CuratorListener event.getName() : " + event.getName());
-			System.out.println("CuratorListener event.getWatchedEvent().getPath() : " + event.getWatchedEvent().getPath());
+			//System.out.println("CuratorListener event.getWatchedEvent().getPath() : " + event.getWatchedEvent().getPath());
 			
 			System.out.println("CuratorListener event.getResultCode() : " + event.getResultCode());
 			

@@ -36,4 +36,9 @@ public class ConnectionKey extends DataSourceKey{
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ConnectionKey [connectionId=" + connectionId + "]";
+	}
 }
