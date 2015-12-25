@@ -3,7 +3,12 @@ package jailer.jdbc;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.curator.CuratorConnectionLossException;
 import org.apache.curator.RetryPolicy;
@@ -79,8 +84,12 @@ public class JdbcRepositoryCurator {
 		connectionKey.setDataSourceId(key.getDataSourceId());
 		connectionKey.setConnectionId(connectionPath.substring(connectionPath.length() - 10, connectionPath.length()));
 		
+		connectionKeyMap.put(connectionKey, info);
+		
 		return connectionKey;
 	}
+
+	private Map<ConnectionKey, ConnectionInfo> connectionKeyMap = new HashMap<>();
 	
 	public void repairConnectionNode(ConnectionKey key, ConnectionInfo info) throws Exception{
 		String data = CommonUtil.objectToJson(info);
@@ -89,29 +98,12 @@ public class JdbcRepositoryCurator {
 	
 	public void deleteConnection(ConnectionKey key) throws Exception{
 		client.delete().guaranteed().forPath(PathManager.getConnectionPath(key));
+		connectionKeyMap.remove(key);
 	}
 	
-	private List<WatchDataSource> SessionExpiredWatcherList = new ArrayList<>();
+	private Map<ConnectionKey, CuratorWatcher> SessionExpiredWatcherMap = new HashMap<>();
 	
-	private class WatchDataSource{
-		private DataSourceKey key;
-		private CuratorWatcher watcher;
-		
-		private WatchDataSource(DataSourceKey key, CuratorWatcher watcher){
-			this.key = key;
-			this.watcher = watcher;
-		}
-
-		public DataSourceKey getKey() {
-			return key;
-		}
-
-		public CuratorWatcher getWatcher() {
-			return watcher;
-		}
-	}
-	
-	public void watchDataSource(DataSourceKey key, CuratorWatcher watcher) throws Exception{
+	public void watchDataSource(ConnectionKey key, CuratorWatcher watcher) throws Exception{
 		try{
 			//client.checkExists().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
 			//client.getUnhandledErrorListenable().addListener(new ConnectionLossListener(key, watcher));
@@ -124,10 +116,10 @@ public class JdbcRepositoryCurator {
 	}
 	
 	private class MyBackgroundCallback implements BackgroundCallback{
-		private DataSourceKey key;
+		private ConnectionKey key;
 		private CuratorWatcher watcher;
 		
-		public MyBackgroundCallback(DataSourceKey key, CuratorWatcher watcher){
+		public MyBackgroundCallback(ConnectionKey key, CuratorWatcher watcher){
 			this.key = key;
 			this.watcher = watcher;
 		}
@@ -135,7 +127,7 @@ public class JdbcRepositoryCurator {
 		@Override
 		public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
 			client.checkExists().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
-			SessionExpiredWatcherList.add(new WatchDataSource(key, watcher));
+			SessionExpiredWatcherMap.put(key, watcher);
 		}
 		
 	}
@@ -172,15 +164,27 @@ public class JdbcRepositoryCurator {
 			System.out.println("ConnectionStateListener newState : " + newState);
 			switch(newState){
 			case RECONNECTED:
-				for(WatchDataSource watchDataSource : SessionExpiredWatcherList){
+				for(Entry<ConnectionKey, CuratorWatcher> keyValue : SessionExpiredWatcherMap.entrySet()){
 					try {
-						watchDataSource(watchDataSource.getKey(), watchDataSource.getWatcher());
+						watchDataSource(keyValue.getKey(), keyValue.getValue());
 						System.out.println("再ウォッチ");
 					} catch (Exception e) {
+						e.printStackTrace();
 						//発生しないはず
 					}
 				}
-				SessionExpiredWatcherList.clear();
+				//SessionExpiredWatcherList.clear();
+				
+				for(Entry<ConnectionKey, ConnectionInfo> keyValue : connectionKeyMap.entrySet()){
+					try {
+						System.out.println("コネクションノード再生成");
+						repairConnectionNode(keyValue.getKey(), keyValue.getValue());
+					} catch (Exception e) {
+						e.printStackTrace();
+						//発生しないはず
+					}
+				}
+				
 				break;
 			default:
 				break;

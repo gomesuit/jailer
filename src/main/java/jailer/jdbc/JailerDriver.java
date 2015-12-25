@@ -44,18 +44,6 @@ public class JailerDriver implements Driver{
 		lastUnderlyingDriverRequested = d;
 		return newConnection;
 	}
-	
-	public void repairConnectionNode(ConnectionKey key) throws Exception {
-		boolean isExists = repository.isExistsConnectionNode(key);
-		if(!isExists){
-			System.out.println("リペアする必要あり");
-			ConnectionInfo connectionInfo = createConnectionInfo(jailerDataSource, jailerJdbcURI);
-			repository.repairConnectionNode(key, connectionInfo);
-			//dataSourceWatcher(key, watcher);
-		}else{
-			System.out.println("リペアする必要なし");
-		}
-	}
 
 	public ConnectionKey createConnection(DataSourceKey key) throws Exception{
 		ConnectionInfo connectionInfo = createConnectionInfo(jailerDataSource, jailerJdbcURI);
@@ -90,7 +78,7 @@ public class JailerDriver implements Driver{
 		repository.deleteConnection(key);
 	}
 	
-	public void dataSourceWatcher(DataSourceKey key, CuratorWatcher watcher) throws Exception{
+	public void dataSourceWatcher(ConnectionKey key, CuratorWatcher watcher) throws Exception{
 		repository.watchDataSource(key, watcher);
 	}
 	
