@@ -9,6 +9,7 @@ import org.apache.curator.CuratorConnectionLossException;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.api.BackgroundCallback;
 import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.framework.api.CuratorListener;
 import org.apache.curator.framework.api.CuratorWatcher;
@@ -113,12 +114,30 @@ public class JdbcRepositoryCurator {
 	public void watchDataSource(DataSourceKey key, CuratorWatcher watcher) throws Exception{
 		try{
 			//client.checkExists().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
-			client.getUnhandledErrorListenable().addListener(new ConnectionLossListener(key, watcher));
-			client.getData().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
+			//client.getUnhandledErrorListenable().addListener(new ConnectionLossListener(key, watcher));
+			//client.getData().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
+			client.getData().inBackground(new MyBackgroundCallback(key, watcher)).forPath(PathManager.getDataSourcePath(key));
 		}catch(Exception e1){
-			System.out.println("Exception");
+			System.out.println("ExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionException");
 			e1.printStackTrace();
 		}
+	}
+	
+	private class MyBackgroundCallback implements BackgroundCallback{
+		private DataSourceKey key;
+		private CuratorWatcher watcher;
+		
+		public MyBackgroundCallback(DataSourceKey key, CuratorWatcher watcher){
+			this.key = key;
+			this.watcher = watcher;
+		}
+
+		@Override
+		public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
+			client.checkExists().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
+			SessionExpiredWatcherList.add(new WatchDataSource(key, watcher));
+		}
+		
 	}
 	
 	public DataSourceKey getDataSourceKey(String uuid) throws Exception{
@@ -194,9 +213,9 @@ public class JdbcRepositoryCurator {
 		@Override
 		public void unhandledError(String message, Throwable e) {
 			// TODO Auto-generated method stub
-			System.out.println("ConnectionLossListener message : " + message);
-			System.out.println("ConnectionLossListener e : " + e);
-			SessionExpiredWatcherList.add(new WatchDataSource(key, watcher));
+			//System.out.println("ConnectionLossListener message : " + message);
+			//System.out.println("ConnectionLossListener e : " + e);
+			//SessionExpiredWatcherList.add(new WatchDataSource(key, watcher));
 		}
 		
 	}
