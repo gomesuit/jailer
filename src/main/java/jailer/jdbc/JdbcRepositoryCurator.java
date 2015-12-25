@@ -2,16 +2,10 @@ package jailer.jdbc;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.curator.CuratorConnectionLossException;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -19,14 +13,10 @@ import org.apache.curator.framework.api.BackgroundCallback;
 import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.framework.api.CuratorListener;
 import org.apache.curator.framework.api.CuratorWatcher;
-import org.apache.curator.framework.api.UnhandledErrorListener;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.curator.retry.RetryForever;
-import org.apache.curator.retry.RetryOneTime;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException.SessionExpiredException;
 import org.apache.zookeeper.data.Stat;
 
 import jailer.core.CommonUtil;
@@ -108,15 +98,7 @@ public class JdbcRepositoryCurator {
 	private Map<ConnectionKey, CuratorWatcher> SessionExpiredWatcherMap = new ConcurrentHashMap<>();
 	
 	public void watchDataSource(ConnectionKey key, CuratorWatcher watcher) throws Exception{
-		try{
-			//client.checkExists().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
-			//client.getUnhandledErrorListenable().addListener(new ConnectionLossListener(key, watcher));
-			//client.getData().usingWatcher(watcher).forPath(PathManager.getDataSourcePath(key));
-			client.getData().inBackground(new MyBackgroundCallback(key, watcher)).forPath(PathManager.getDataSourcePath(key));
-		}catch(Exception e1){
-			System.out.println("ExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionExceptionException");
-			e1.printStackTrace();
-		}
+		client.getData().inBackground(new MyBackgroundCallback(key, watcher)).forPath(PathManager.getDataSourcePath(key));
 	}
 	
 	private class MyBackgroundCallback implements BackgroundCallback{
@@ -178,7 +160,6 @@ public class JdbcRepositoryCurator {
 						//発生しないはず
 					}
 				}
-				//SessionExpiredWatcherList.clear();
 				
 				for(Entry<ConnectionKey, ConnectionInfo> keyValue : connectionKeyMap.entrySet()){
 					try {
@@ -195,36 +176,6 @@ public class JdbcRepositoryCurator {
 				break;
 			}
 			
-		}
-		
-	}
-	
-	private class MyUnhandledErrorListener implements UnhandledErrorListener{
-
-		@Override
-		public void unhandledError(String message, Throwable e) {
-			// TODO Auto-generated method stub
-			System.out.println("UnhandledErrorListener message : " + message);
-			System.out.println("UnhandledErrorListener e : " + e);
-		}
-		
-	}
-	
-	private class ConnectionLossListener implements UnhandledErrorListener{
-		private DataSourceKey key;
-		private CuratorWatcher watcher;
-		
-		public ConnectionLossListener(DataSourceKey key, CuratorWatcher watcher){
-			this.key = key;
-			this.watcher = watcher;
-		}
-
-		@Override
-		public void unhandledError(String message, Throwable e) {
-			// TODO Auto-generated method stub
-			//System.out.println("ConnectionLossListener message : " + message);
-			//System.out.println("ConnectionLossListener e : " + e);
-			//SessionExpiredWatcherList.add(new WatchDataSource(key, watcher));
 		}
 		
 	}
