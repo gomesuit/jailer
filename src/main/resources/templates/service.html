@@ -1,5 +1,7 @@
 
-<div>グループ登録</div>
+<h1 class="page-header">グループ</h1>
+
+<div>登録</div>
 <form action="#" th:action="@{/group/regist}" th:object="${groupKey}"
 	method="post">
 	<input type="hidden" th:name="serviceId" th:value="${service}" />
@@ -15,8 +17,8 @@
 </form>
 
 <br />
-<div>グループ一覧</div>
-<table border="1" rules="all">
+<div>一覧</div>
+<table class="table table-bordered" border="1" rules="all">
 	<tr>
 		<td>group</td>
 	</tr>

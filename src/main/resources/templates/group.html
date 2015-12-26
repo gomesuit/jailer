@@ -1,4 +1,6 @@
 
+<h1 class="page-header">データソース</h1>
+
 <div>データソース登録</div>
 <form action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceKey}" method="post">
 	<input type="hidden" th:name="serviceId" th:value="${groupKey.serviceId}" />
@@ -16,7 +18,7 @@
 
 <br />
 <div>データソース一覧</div>
-<table border="1" rules="all">
+<table class="table table-bordered" border="1" rules="all">
 	<tr>
 		<td>dataSourceId</td>
 	</tr>
