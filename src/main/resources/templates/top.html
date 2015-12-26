@@ -4,18 +4,63 @@
 	<meta content="ja" http-equiv="Content-Language" />
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
 	<title>sample page</title>
+
+	<!-- Bootstrap -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
 </head>
 <body>
-	<div>サービス一覧</div>
-	<table border="1" rules="all">
-		<tr>
-			<td>service</td>
-		</tr>
-		<tr th:each="service : ${serviceList}">
-			<td>
-				<a th:href="@{/service(service=${service})}" th:text="${service}" />
-			</td>
-		</tr>
-	</table>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Jailer</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">DataSource</a></li>
+          </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          	<h1 class="page-header">Dashboard</h1>
+
+			<h2 class="sub-header">サービス一覧</h2>
+			<div class="table-responsive">
+			<table class="table table-bordered" border="1" rules="all">
+				<thead>
+					<tr>
+						<td>service</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="service : ${serviceList}">
+						<td>
+							<a th:href="@{/service(service=${service})}" th:text="${service}" >test</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+        </div>
+      </div>
+    </div>
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
 </body>
 </html>
