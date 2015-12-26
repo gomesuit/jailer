@@ -1,7 +1,6 @@
 package jailer.web;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import jailer.core.model.DataSourceKey;
 import jailer.core.model.GroupKey;
@@ -9,7 +8,6 @@ import jailer.core.model.JailerDataSource;
 import jailer.core.model.ServiceKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,9 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.MappedInterceptor;
 
 @Controller
 public class JailerController {
@@ -32,38 +27,6 @@ public class JailerController {
 
 		model.addAttribute("pageName", "top");
 		return "common_frame";
-	}
-	
-	@Bean
-    public MappedInterceptor interceptor() {
-		return new MappedInterceptor(new String[]{"/*"}, new SideMenuInterceptor());
-	}
-	
-	private class SideMenuInterceptor implements HandlerInterceptor{
-
-		@Override
-		public void afterCompletion(HttpServletRequest arg0,
-				HttpServletResponse arg1, Object arg2, Exception arg3)
-				throws Exception {
-			
-		}
-
-		@Override
-		public void postHandle(HttpServletRequest arg0,
-				HttpServletResponse arg1, Object arg2, ModelAndView arg3)
-				throws Exception {
-			
-		}
-
-		@Override
-		public boolean preHandle(HttpServletRequest arg0,
-				HttpServletResponse arg1, Object arg2) throws Exception {
-			
-			System.out.println("aaaa");
-			
-			return true;
-		}
-		
 	}
 
 	@RequestMapping("/{service}/group")
