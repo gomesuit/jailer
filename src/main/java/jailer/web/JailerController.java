@@ -24,8 +24,9 @@ public class JailerController {
 	@RequestMapping("/")
 	public String top(Model model){
 		model.addAttribute("serviceList", jailerService.getServiceList());
-		
-		return "top";
+
+		model.addAttribute("pageName", "top");
+		return "common_frame";
 	}
 	
 	@RequestMapping("/service")
@@ -40,7 +41,8 @@ public class JailerController {
     	model.addAttribute("groupKey", new GroupKey());
 		model.addAttribute("groupList", jailerService.getGroupList(key));
 		
-		return "service";
+		model.addAttribute("pageName", "service");
+		return "common_frame";
 	}
 	
     @RequestMapping("/group")
@@ -57,7 +59,9 @@ public class JailerController {
     	model.addAttribute("dataSourceKey", new DataSourceKey());
     	model.addAttribute("dataSourceIdList", jailerService.getDataSourceIdList(key));
     	
-        return "group";
+
+		model.addAttribute("pageName", "group");
+		return "common_frame";
     }
 
     @RequestMapping(value="/dataSource/regist", method=RequestMethod.POST)
@@ -102,7 +106,8 @@ public class JailerController {
     	
     	model.addAttribute("connectionList", jailerService.getConnectionList(key));
     	
-    	return "datasource";
+		model.addAttribute("pageName", "datasource");
+		return "common_frame";
     }
 
     @RequestMapping(value="/dataSource/update", method=RequestMethod.POST)

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta content="ja" http-equiv="Content-Language" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Top page</title>
+
+<head th:substituteby="common::static" />
+
+</head>
+<body>
+	<div th:substituteby="common::menubar" />
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div th:substituteby="common::sidebar" />
+
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+				<head th:substituteby="${pageName}" />
+			</div>
+		</div>
+	</div>
+
+	<head th:substituteby="common::footer" />
+</body>
+</html>

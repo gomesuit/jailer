@@ -14,7 +14,7 @@
 </head>
 
 
-<div th:fragment="sidebar" th:remove="tag">
+<div th:fragment="menubar" th:remove="tag">
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -29,4 +29,14 @@
 			</div>
 		</div>
 	</nav>
+</div>
+
+<div th:fragment="sidebar" th:remove="tag">
+	<div class="col-sm-3 col-md-2 sidebar">
+		<ul class="nav nav-sidebar">
+			<li class="active"><a href="#">Overview <span
+					class="sr-only">(current)</span></a></li>
+			<li><a href="#">DataSource</a></li>
+		</ul>
+	</div>
 </div>

@@ -1,2 +1,6 @@
 eclipse.preferences.version=1
+encoding//src/main/resources/templates/datasource.html=UTF-8
+encoding//src/main/resources/templates/group.html=UTF-8
+encoding//src/main/resources/templates/service.html=UTF-8
+encoding//src/main/resources/templates/top.html=UTF-8
 encoding/<project>=UTF-8
