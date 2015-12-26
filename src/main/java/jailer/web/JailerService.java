@@ -9,6 +9,7 @@ import jailer.core.model.JailerDataSource;
 import jailer.core.model.ServiceKey;
 import jailer.web.zookeeper.ZookeeperRepository;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,27 @@ public class JailerService {
 	@Autowired
 	private ZookeeperRepository repository;
 	
-	public List<String> getDataSourceIdList(GroupKey key) throws Exception{
+	public List<String> getDataSourceIdList(GroupKey key){
 		return repository.getDataSourceList(key);
+	}
+	
+	public List<DataSourceKey> getDataSourceKeyList(ServiceKey key){
+		List<DataSourceKey> DataSourceKeyList = new ArrayList<>();
+		
+		for(String group : getGroupList(key)){
+			GroupKey groupKey = new GroupKey();
+			groupKey.setServiceId(key.getServiceId());
+			groupKey.setGroupId(group);
+			for(String dataSourceId : getDataSourceIdList(groupKey)){
+				DataSourceKey dataSourceKey = new DataSourceKey();
+				dataSourceKey.setServiceId(key.getServiceId());
+				dataSourceKey.setGroupId(group);
+				dataSourceKey.setDataSourceId(dataSourceId);
+				DataSourceKeyList.add(dataSourceKey);
+			}
+		}
+		
+		return DataSourceKeyList;
 	}
 	
 	public void registDataSourceId(DataSourceKey key) throws JsonProcessingException, KeeperException, InterruptedException{

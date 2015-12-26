@@ -1,7 +1,7 @@
 
 <head th:fragment="static" th:remove="tag">
 	<!-- Bootstrap -->
-	<link href="css/bootstrap.min.css" rel="stylesheet" />
+	<link href="/css/bootstrap.min.css" rel="stylesheet" />
 	<!-- Custom styles for this template -->
 	<link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet" />
 </head>
@@ -10,7 +10,7 @@
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="js/bootstrap.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
 </head>
 
 
@@ -35,9 +35,12 @@
 <div th:fragment="sidebar" th:remove="tag">
 	<div class="col-sm-3 col-md-2 sidebar">
 		<ul class="nav nav-sidebar">
-			<li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-			<li><a href="#">Group</a></li>
-			<li><a href="#">DataSource</a></li>
+			<li class="active" th:if="${pageName} == top"><a th:href="@{'/'}">Overview<span class="sr-only">(current)</span></a></li>
+			<li th:unless="${pageName} == top"><a th:href="@{'/'}">Overview </a></li>
+			<li class="active" th:if="${pageName} == service"><a th:href="@{'/' + ${service} + '/group'}">Group<span class="sr-only">(current)</span></a></li>
+			<li th:unless="${pageName} == service"><a th:href="@{'/' + ${service} + '/group'}">Group</a></li>
+			<li class="active" th:if="${pageName} == group"><a th:href="@{'/' + ${service} + '/list'}">Connection<span class="sr-only">(current)</span></a></li>
+			<li th:unless="${pageName} == group"><a th:href="@{'/' + ${service} + '/list'}">Connection</a></li>
 		</ul>
 	</div>
 </div>

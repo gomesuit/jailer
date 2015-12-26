@@ -1,5 +1,8 @@
 
-<h1 class="page-header">データソース詳細</h1>
+<h1 class="page-header">コネクション詳細</h1>
+
+<h3 class="sub-header">UUID</h3>
+<div th:text="${jailerDataSource.uuid}" />
 
 <h3 class="sub-header">URL登録</h3>
 <form class="form-inline" action="#" th:action="@{/dataSource/update}" th:object="${dataSourceForm}" method="post">
@@ -22,86 +25,73 @@
 </form>
 
 <br />
-<h3 class="sub-header">UUID</h3>
-<div th:text="${jailerDataSource.uuid}" />
-
-<br />
-<h3 class="sub-header">URL</h3>
-<table class="table table-bordered" border="1" rules="all">
-	<tr>
-		<td>dataSourceId</td>
-		<td>url</td>
-	</tr>
-	<tr>
-		<td>
-			<div th:text="${jailerDataSource.dataSourceId}" />
-		</td>
-		<td>
-			<div th:text="${jailerDataSource.url}" />
-		</td>
-	</tr>
-</table>
-
-<br />
 <h3 class="sub-header">登録済みパラメータ</h3>
 <table class="table table-bordered" border="1" rules="all">
-	<tr>
-		<td>key</td>
-		<td>value</td>
-		<td>Delete</td>
-	</tr>
-	<tr th:each="property : ${jailerDataSource.propertyList}">
-		<td>
-			<div th:text="${property.key}" />
-		</td>
-		<td>
-			<div th:text="${property.value}" />
-		</td>
-		<td>
-			<form action="#" th:action="@{/dataSourceParameter/remove}" th:object="${dataSourceParameterForm}" method="post">
-				<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
-				<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
-				<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
-				<input type="hidden" th:name="key" th:value="${property.key}" />
-				<input type="submit" value="Delete" />
-			</form>
-		</td>
-	</tr>
+	<thead>
+		<tr>
+			<td>key</td>
+			<td>value</td>
+			<td>Delete</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr th:each="property : ${jailerDataSource.propertyList}">
+			<td>
+				<div th:text="${property.key}" />
+			</td>
+			<td>
+				<div th:text="${property.value}" />
+			</td>
+			<td>
+				<form action="#" th:action="@{/dataSourceParameter/remove}" th:object="${dataSourceParameterForm}" method="post">
+					<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+					<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
+					<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
+					<input type="hidden" th:name="key" th:value="${property.key}" />
+					<input type="submit" value="Delete" />
+				</form>
+			</td>
+		</tr>
+	</tbody>
 </table>
 
 <br />
 <h3 class="sub-header">コネクション一覧</h3>
 <table class="table table-bordered" border="1" rules="all">
-	<tr>
-		<td>id</td>
-		<td>接続元ホスト名</td>
-		<td>接続元IPアドレス</td>
-		<td>接続開始日時</td>
-		<td>接続url</td>
-		<td>接続パラメータ</td>
-		<td>オプションパラメータ</td>
-	</tr>
-	<tr th:each="connection : ${connectionList}">
-		<td>
-			<div th:text="${connection.key}" />
-		</td>
-		<td>
-			<div th:text="${connection.value.host}" />
-		</td>
-		<td>
-			<div th:text="${connection.value.ipAddress}" />
-		</td>
-		<td>
-			<div th:text="${#dates.format(connection.value.sinceConnectTime, 'yyyy/MM/dd HH:mm:ss')}" />
-		</td>
-		<td>
-			<div th:text="${connection.value.connectUrl}" />
-		</td>
-		<td>
-			<div th:text="${connection.value.propertyList}" />
-		</td>
-		<td>
-			<div th:text="${connection.value.optionalParam}" />
-		</td>
-	</tr>
+	<thead>
+		<tr>
+			<td>id</td>
+			<td>接続元ホスト名</td>
+			<td>接続元IPアドレス</td>
+			<td>接続開始日時</td>
+			<td>接続url</td>
+			<td>接続パラメータ</td>
+			<td>オプションパラメータ</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr th:each="connection : ${connectionList}">
+			<td>
+				<div th:text="${connection.key}" />
+			</td>
+			<td>
+				<div th:text="${connection.value.host}" />
+			</td>
+			<td>
+				<div th:text="${connection.value.ipAddress}" />
+			</td>
+			<td>
+				<div th:text="${#dates.format(connection.value.sinceConnectTime, 'yyyy/MM/dd HH:mm:ss')}" />
+			</td>
+			<td>
+				<div th:text="${connection.value.connectUrl}" />
+			</td>
+			<td>
+				<div th:text="${connection.value.propertyList}" />
+			</td>
+			<td>
+				<div th:text="${connection.value.optionalParam}" />
+			</td>
+		</tr>
+	</tbody>
 </table>
