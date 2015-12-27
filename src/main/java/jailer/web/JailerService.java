@@ -18,8 +18,6 @@ import org.apache.zookeeper.KeeperException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 @Service
 public class JailerService {
 	@Autowired
@@ -48,7 +46,7 @@ public class JailerService {
 		return DataSourceKeyList;
 	}
 	
-	public void registDataSourceId(DataSourceKey key) throws JsonProcessingException, KeeperException, InterruptedException{
+	public void registDataSourceId(DataSourceKey key) throws Exception{
 		String uuid = CommonUtil.getRandomUUID();
 		
 		JailerDataSource jailerDataSource = new JailerDataSource();
@@ -58,10 +56,7 @@ public class JailerService {
 		
 		try {
 			repository.registUUID(uuid, key);
-		} catch (KeeperException e) {
-			e.printStackTrace();
-			repository.deleteDataSource(key);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			repository.deleteDataSource(key);
 		}
@@ -102,7 +97,7 @@ public class JailerService {
 	}
 
 	
-	public void registGroup(GroupKey key) throws KeeperException, InterruptedException{
+	public void registGroup(GroupKey key) throws Exception{
 		repository.registGroup(key);
 	}
 	
