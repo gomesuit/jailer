@@ -6,61 +6,71 @@
 		<h3 class="panel-title">UUID</h3>
 	</div>
 	<div class="panel-body">
-		<div th:text="${jailerDataSource.uuid}" />
+		<strong><h4 th:text="${jailerDataSource.uuid}" /></strong>
 	</div>
 </div>
 
-<br />
-<h3 class="sub-header">URL登録</h3>
-<form class="form-inline" action="#" th:action="@{/dataSource/update}" th:object="${dataSourceForm}" method="post">
-	<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
-	<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
-	<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
-	<input type="text" class="form-control" th:field="*{url}" placeholder="url" />
-	<input type="submit" class="btn btn-primary" value="登録" />
-</form>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">接続URL</h3>
+	</div>
+	<div class="panel-body">
+		<strong><h4 th:text="${jailerDataSource.url}" /></strong>
+		<br />
+		<form class="form-inline" action="#" th:action="@{/dataSource/update}" th:object="${dataSourceForm}" method="post">
+			<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+			<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
+			<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
+			<input type="text" class="form-control" th:name="url" placeholder="url" />
+			<input type="submit" class="btn btn-primary" value="更新" />
+		</form>
+	</div>
+</div>
 
-<br />
-<h3 class="sub-header">パラメータ登録</h3>
-<form class="form-inline" action="#" th:action="@{/dataSourceParameter/regist}" th:object="${dataSourceParameterForm}" method="post">
-	<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
-	<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
-	<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
-	<input type="text" class="form-control" th:field="*{key}" placeholder="KEY" />
-	<input type="text" class="form-control" th:field="*{value}" placeholder="VALUE" />
-	<input type="submit" class="btn btn-primary" value="登録" />
-</form>
-
-<br />
-<h3 class="sub-header">登録済みパラメータ</h3>
-<table class="table table-bordered">
-	<thead>
-		<tr>
-			<td class="text-center"><strong>KEY</strong></td>
-			<td class="text-center"><strong>VALUE</strong></td>
-			<td class="text-center"><strong>DELETE</strong></td>
-		</tr>
-	</thead>
-	<tbody>
-		<tr th:each="property : ${jailerDataSource.propertyList}">
-			<td>
-				<div th:text="${property.key}" />
-			</td>
-			<td>
-				<div th:text="${property.value}" />
-			</td>
-			<td  class="text-center">
-				<form action="#" th:action="@{/dataSourceParameter/remove}" th:object="${dataSourceParameterForm}" method="post">
-					<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
-					<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
-					<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
-					<input type="hidden" th:name="key" th:value="${property.key}" />
-					<input type="submit" class="btn btn-warning btn-sm" value="Delete" />
-				</form>
-			</td>
-		</tr>
-	</tbody>
-</table>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">接続パラメータ</h3>
+	</div>
+	<div class="panel-body">
+		<form class="form-inline" action="#" th:action="@{/dataSourceParameter/regist}" th:object="${dataSourceParameterForm}" method="post">
+			<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+			<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
+			<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
+			<input type="text" class="form-control" th:field="*{key}" placeholder="KEY" />
+			<input type="text" class="form-control" th:field="*{value}" placeholder="VALUE" />
+			<input type="submit" class="btn btn-primary" value="登録" />
+		</form>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<td class="text-center"><strong>KEY</strong></td>
+					<td class="text-center"><strong>VALUE</strong></td>
+					<td class="text-center"><strong>DELETE</strong></td>
+				</tr>
+			</thead>
+			<br />
+			<tbody>
+				<tr th:each="property : ${jailerDataSource.propertyList}">
+					<td>
+						<div th:text="${property.key}" />
+					</td>
+					<td>
+						<div th:text="${property.value}" />
+					</td>
+					<td  class="text-center">
+						<form action="#" th:action="@{/dataSourceParameter/remove}" th:object="${dataSourceParameterForm}" method="post">
+							<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+							<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
+							<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
+							<input type="hidden" th:name="key" th:value="${property.key}" />
+							<input type="submit" class="btn btn-warning btn-sm" value="Delete" />
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
 
 <br />
 <h3 class="sub-header">コネクション一覧</h3>
