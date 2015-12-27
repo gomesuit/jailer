@@ -85,9 +85,8 @@ public class JailerDriver implements Driver{
 	private JailerDataSource getJailerDataSource(URI uri) throws Exception{
 		if(this.jailerJdbcURI == null || !this.jailerJdbcURI.equals(uri)){
 			this.jailerJdbcURI = uri;
-			String host = JailerJdbcURIManager.getHost(jailerJdbcURI);
-			int port = JailerJdbcURIManager.getPort(jailerJdbcURI);
-			repository = new JdbcRepositoryCurator(host, port);
+			String connectString = JailerJdbcURIManager.getConnectString(jailerJdbcURI);
+			repository = new JdbcRepositoryCurator(connectString);
 		}
 		DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(jailerJdbcURI));
 		JailerDataSource jailerDataSource = repository.getJailerDataSource(key);

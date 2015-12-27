@@ -30,12 +30,12 @@ public class JdbcRepositoryCurator {
 	private final CuratorFramework client;
 	private static final Charset charset = StandardCharsets.UTF_8;
 	
-	public JdbcRepositoryCurator(String host, int port){
+	public JdbcRepositoryCurator(String connectString){
 		RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
 		//RetryPolicy retryPolicy = new RetryOneTime(1000);
 		//this.client = CuratorFrameworkFactory.newClient(host + ":" + port, retryPolicy);
 		this.client = CuratorFrameworkFactory.builder().
-        connectString(host + ":" + port).
+        connectString(connectString).
         sessionTimeoutMs(6 * 1000).
         connectionTimeoutMs(5 * 1000).
         retryPolicy(retryPolicy).

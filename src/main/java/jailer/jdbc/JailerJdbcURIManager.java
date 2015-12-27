@@ -27,6 +27,10 @@ public class JailerJdbcURIManager {
 		return uri.getPort();
 	}
 	
+	public static String getConnectString(URI uri){
+		return uri.getAuthority();
+	}
+	
 	public static String getPath(URI uri){
 		return PathManager.getRootPath() + uri.getPath();
 	}
