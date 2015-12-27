@@ -6,7 +6,7 @@
 		<h3 class="panel-title">UUID</h3>
 	</div>
 	<div class="panel-body">
-		<strong><h4 th:text="${jailerDataSource.uuid}" /></strong>
+		<strong><h4 th:text="'jdbc:jailer://' + ${connectString} + '/' + ${jailerDataSource.uuid}" /></strong>
 	</div>
 </div>
 

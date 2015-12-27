@@ -27,6 +27,10 @@ public class JailerService {
 		return repository.getDataSourceList(key);
 	}
 	
+	public String getConnectString() {
+		return repository.getConnectString();
+	}
+	
 	public List<DataSourceKey> getDataSourceKeyList(ServiceKey key){
 		List<DataSourceKey> DataSourceKeyList = new ArrayList<>();
 		

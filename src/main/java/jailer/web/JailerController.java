@@ -81,6 +81,8 @@ public class JailerController {
 		key.setDataSourceId(dataSourceId);
 	
 		model.addAttribute("dataSourceKey", key);
+		
+		model.addAttribute("connectString", jailerService.getConnectString());
 	
 		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(key);
 		model.addAttribute("jailerDataSource", jailerDataSource);

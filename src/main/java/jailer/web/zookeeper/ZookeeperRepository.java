@@ -29,6 +29,10 @@ public class ZookeeperRepository {
 			return new ArrayList<>();
 		}
 	}
+	
+	public String getConnectString() {
+		return zooKeeper.getConnectString();
+	}
 
 	public void registGroup(GroupKey key) throws Exception{
 		zooKeeper.createDataForPersistent(PathManager.getGroupPath(key), "");

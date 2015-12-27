@@ -14,12 +14,14 @@ import org.apache.zookeeper.Watcher;
 public class JailerZookeeperCurator {
 	private static final Charset charset = StandardCharsets.UTF_8;
 	private final CuratorFramework client;
+	private final String connectString;
 	
 	public JailerZookeeperCurator(String connectString){
 		this(connectString, new DefaultWatcher());
 	}
 	
 	public JailerZookeeperCurator(String connectString, Watcher watcher){
+		this.connectString = connectString;
 		RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
 		this.client = CuratorFrameworkFactory.builder().
         connectString(connectString).
@@ -65,6 +67,10 @@ public class JailerZookeeperCurator {
 	
 	public void close(){
 		client.close();
+	}
+
+	public String getConnectString() {
+		return connectString;
 	}
 	
 	
