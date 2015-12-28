@@ -1,6 +1,6 @@
 package jailer;
 
-import jailer.core.JailerZookeeperCurator;
+import jailer.web.zookeeper.JailerZookeeperCurator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

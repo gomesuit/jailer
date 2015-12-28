@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jailer.core.CommonUtil;
-import jailer.core.JailerZookeeperCurator;
 import jailer.core.PathManager;
 import jailer.core.model.ConnectionInfo;
 import jailer.core.model.ConnectionKey;

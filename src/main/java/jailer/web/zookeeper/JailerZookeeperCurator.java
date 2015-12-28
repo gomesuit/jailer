@@ -1,4 +1,4 @@
-package jailer.core;
+package jailer.web.zookeeper;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -9,6 +9,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 
 public class JailerZookeeperCurator {
@@ -18,6 +19,13 @@ public class JailerZookeeperCurator {
 	
 	public JailerZookeeperCurator(String connectString){
 		this(connectString, new DefaultWatcher());
+	}
+	
+	static class DefaultWatcher implements Watcher{
+		@Override
+		public void process(WatchedEvent event) {
+			System.out.println("DefaultWatcher.process!");
+		}
 	}
 	
 	public JailerZookeeperCurator(String connectString, Watcher watcher){
