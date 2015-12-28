@@ -64,12 +64,12 @@ public class JailerConnection implements Connection{
 				try{
 					newConnection = driver.reCreateConnection();
 				}catch(Exception e){
-					return;
-				}finally{
 					driver.dataSourceWatcher(key, new DataSourceWatcher());
+					return;
 				}
 				
 				ConnectionKey newKey = driver.createConnection(key);
+				driver.dataSourceWatcher(newKey, new DataSourceWatcher());
 				
 //				newConnection.setAutoCommit(realConnection.getAutoCommit());
 //				newConnection.setCatalog(realConnection.getCatalog());
