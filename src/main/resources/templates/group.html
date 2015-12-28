@@ -20,6 +20,7 @@
 			<tr>
 				<td class="text-center"><strong>GROUP</strong></td>
 				<td class="text-center"><strong>ID</strong></td>
+				<td class="text-center"><strong>UUID</strong></td>
 				<td class="text-center"><strong>詳細</strong></td>
 			</tr>
 			<tr th:each="connection : ${connectionList}">
@@ -27,7 +28,11 @@
 					<div th:text="${connection.group}" />
 				</td>
 				<td>
-					<div th:text="${connection.id}" />
+					<span th:text="${connection.id}" />
+					<span class="badge" th:text="${connection.point}" />
+				</td>
+				<td>
+					<div th:text="${connection.uuid}" />
 				</td>
 				<td class="text-center">
 					<a th:href="@{'/' + ${serviceKey.serviceId} + '/dataSource'(group=${connection.group}, dataSource=${connection.id})}">詳細</a>

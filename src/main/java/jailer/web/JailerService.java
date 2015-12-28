@@ -31,17 +31,24 @@ public class JailerService {
 		return repository.getConnectString();
 	}
 	
-	public List<RowConnectionInfo> getConnectionInfoList(ServiceKey key){
+	public List<RowConnectionInfo> getConnectionInfoList(ServiceKey key) throws Exception{
 		List<RowConnectionInfo> connectionInfoList = new ArrayList<>();
 		
 		for(String group : getGroupList(key)){
 			GroupKey groupKey = new GroupKey();
 			groupKey.setServiceId(key.getServiceId());
 			groupKey.setGroupId(group);
-			for(String dataSourceId : getDataSourceIdList(groupKey)){				
+			for(String dataSourceId : getDataSourceIdList(groupKey)){
+				DataSourceKey dataSourceKey = new DataSourceKey();
+				dataSourceKey.setServiceId(groupKey.getServiceId());
+				dataSourceKey.setGroupId(groupKey.getGroupId());
+				dataSourceKey.setDataSourceId(dataSourceId);
+				
 				RowConnectionInfo connectionInfo = new RowConnectionInfo();
 				connectionInfo.setGroup(group);
 				connectionInfo.setId(dataSourceId);
+				connectionInfo.setPoint(repository.getConnectionNum(dataSourceKey));
+				connectionInfo.setUuid(repository.getDataSource(dataSourceKey).getUuid());
 				connectionInfoList.add(connectionInfo);
 			}
 		}
