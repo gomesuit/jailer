@@ -6,18 +6,20 @@ import jailer.core.model.GroupKey;
 import jailer.core.model.ServiceKey;
 
 public class PathManager {
-	private static final String prefix = "jailer";
+	private static final String system_prefix = "jailer";
+	private static final String data_prefix = "DataSource";
+	private static final String url_prefix = "UrlManager";
 	
 	public static String getRootPath(){
-		return appendPath("", prefix);
+		return appendPath("", system_prefix);
 	}
 	
 	public static String getDataSourceRootPath(){
-		return appendPath(getRootPath(), "DataSource");
+		return appendPath(getRootPath(), data_prefix);
 	}
 	
 	public static String getUrlManagerPath(){
-		return appendPath(getRootPath(), "UrlManager");
+		return appendPath(getRootPath(), url_prefix);
 	}
 	
 	public static String getServicePath(ServiceKey key){
