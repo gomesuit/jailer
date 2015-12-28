@@ -58,9 +58,8 @@ public class JdbcRepositoryCurator {
         connectionTimeoutMs(conf.getConnectionTimeoutMs()).
         retryPolicy(retryPolicy).
         build();
-		this.client.getCuratorListenable().addListener(new Listener());
-		this.client.getConnectionStateListenable().addListener(new MyConnectionStateListener());
-		//this.client.getUnhandledErrorListenable().addListener(new MyUnhandledErrorListener());;
+		this.client.getCuratorListenable().addListener(new DefaultListener());
+		this.client.getConnectionStateListenable().addListener(new ReConnectedListener());
 		this.client.start();
 	}
 	
@@ -145,26 +144,20 @@ public class JdbcRepositoryCurator {
 		return CommonUtil.jsonToObject(new String(result, charset), DataSourceKey.class);
 	}
 
-	private class Listener implements CuratorListener{
+	private class DefaultListener implements CuratorListener{
 
 		@Override
 		public void eventReceived(CuratorFramework client, CuratorEvent event) throws Exception {
-			// TODO Auto-generated method stub
-			//if(event.getType() == CuratorEventType.CREATE){
-			//	System.out.println("CuratorListener : " + event.getType());
-			//}
 			System.out.println("CuratorListener event.getType() : " + event.getType());
 			System.out.println("CuratorListener event.getPath() : " + event.getPath());
 			System.out.println("CuratorListener event.getName() : " + event.getName());
-			//System.out.println("CuratorListener event.getWatchedEvent().getPath() : " + event.getWatchedEvent().getPath());
-			
 			System.out.println("CuratorListener event.getResultCode() : " + event.getResultCode());
 			
 		}
 		
 	}
 	
-	private class MyConnectionStateListener implements ConnectionStateListener{
+	private class ReConnectedListener implements ConnectionStateListener{
 
 		@Override
 		public void stateChanged(CuratorFramework client, ConnectionState newState) {
