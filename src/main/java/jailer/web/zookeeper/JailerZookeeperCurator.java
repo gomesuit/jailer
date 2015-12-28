@@ -18,23 +18,15 @@ public class JailerZookeeperCurator {
 	private final String connectString;
 	
 	public JailerZookeeperCurator(String connectString){
-		this(connectString, new DefaultWatcher());
+		this(connectString, new ExponentialBackoffRetry(1000, 3), new ZookeeperTimeOutConf(6 * 1000, 5 * 1000), new DefaultWatcher());
 	}
 	
-	static class DefaultWatcher implements Watcher{
-		@Override
-		public void process(WatchedEvent event) {
-			System.out.println("DefaultWatcher.process!");
-		}
-	}
-	
-	public JailerZookeeperCurator(String connectString, Watcher watcher){
+	public JailerZookeeperCurator(String connectString, RetryPolicy retryPolicy, ZookeeperTimeOutConf conf, Watcher watcher){
 		this.connectString = connectString;
-		RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
 		this.client = CuratorFrameworkFactory.builder().
         connectString(connectString).
-        sessionTimeoutMs(6 * 1000).
-        connectionTimeoutMs(5 * 1000).
+        sessionTimeoutMs(conf.getSessionTimeoutMs()).
+        connectionTimeoutMs(conf.getConnectionTimeoutMs()).
         retryPolicy(retryPolicy).
         build();
 		this.client.start();
@@ -79,6 +71,13 @@ public class JailerZookeeperCurator {
 
 	public String getConnectString() {
 		return connectString;
+	}
+	
+	static class DefaultWatcher implements Watcher{
+		@Override
+		public void process(WatchedEvent event) {
+			System.out.println("DefaultWatcher.process!");
+		}
 	}
 	
 	
