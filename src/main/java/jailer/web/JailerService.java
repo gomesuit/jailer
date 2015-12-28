@@ -72,6 +72,10 @@ public class JailerService {
 		}
 	}
 	
+	public void deleteDataSourceId(DataSourceKey key) throws Exception{
+		repository.deleteDataSource(key);
+	}
+	
 	public void registDataSource(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception{
 		repository.updateDataSource(key, jailerDataSource);
 	}
@@ -109,6 +113,10 @@ public class JailerService {
 	
 	public void registGroup(GroupKey key) throws Exception{
 		repository.registGroup(key);
+	}
+	
+	public void deleteGroup(GroupKey key) throws Exception{
+		repository.deleteGroup(key);
 	}
 	
 	public List<String> getGroupList(ServiceKey key){

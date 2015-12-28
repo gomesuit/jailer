@@ -39,7 +39,10 @@ public class JailerController {
 		ServiceKey key = new ServiceKey();
 		key.setServiceId(service);
 		
+		// 登録・削除
 		model.addAttribute("groupKey", new GroupKey());
+		
+		// 一覧
 		model.addAttribute("groupList", jailerService.getGroupList(key));
 
 		model.addAttribute("pageName", "service");
@@ -116,10 +119,28 @@ public class JailerController {
 		return "redirect:" + referer;
 	}
 
+	@RequestMapping(value = "/dataSource/delete", method = RequestMethod.POST)
+	public String deleteDataSourceId(@ModelAttribute DataSourceKey key,
+			HttpServletRequest request) throws Exception {
+		jailerService.deleteDataSourceId(key);
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + referer;
+	}
+
 	@RequestMapping(value = "/group/regist", method = RequestMethod.POST)
 	public String registGroup(@ModelAttribute GroupKey key,
 			HttpServletRequest request) throws Exception {
 		jailerService.registGroup(key);
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + referer;
+	}
+
+	@RequestMapping(value = "/group/delete", method = RequestMethod.POST)
+	public String deleteGroup(@ModelAttribute GroupKey key,
+			HttpServletRequest request) throws Exception {
+		jailerService.deleteGroup(key);
 
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
