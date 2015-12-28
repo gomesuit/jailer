@@ -31,23 +31,22 @@ public class JailerService {
 		return repository.getConnectString();
 	}
 	
-	public List<DataSourceKey> getDataSourceKeyList(ServiceKey key){
-		List<DataSourceKey> DataSourceKeyList = new ArrayList<>();
+	public List<RowConnectionInfo> getConnectionInfoList(ServiceKey key){
+		List<RowConnectionInfo> connectionInfoList = new ArrayList<>();
 		
 		for(String group : getGroupList(key)){
 			GroupKey groupKey = new GroupKey();
 			groupKey.setServiceId(key.getServiceId());
 			groupKey.setGroupId(group);
-			for(String dataSourceId : getDataSourceIdList(groupKey)){
-				DataSourceKey dataSourceKey = new DataSourceKey();
-				dataSourceKey.setServiceId(key.getServiceId());
-				dataSourceKey.setGroupId(group);
-				dataSourceKey.setDataSourceId(dataSourceId);
-				DataSourceKeyList.add(dataSourceKey);
+			for(String dataSourceId : getDataSourceIdList(groupKey)){				
+				RowConnectionInfo connectionInfo = new RowConnectionInfo();
+				connectionInfo.setGroup(group);
+				connectionInfo.setId(dataSourceId);
+				connectionInfoList.add(connectionInfo);
 			}
 		}
 		
-		return DataSourceKeyList;
+		return connectionInfoList;
 	}
 	
 	public void registDataSourceId(DataSourceKey key) throws Exception{

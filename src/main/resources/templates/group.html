@@ -6,7 +6,7 @@
 		<h3 class="panel-title">コネクション</h3>
 	</div>
 	<div class="panel-body">
-		<form class="form-inline" action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceKey}" method="post">
+		<form class="form-inline" action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceInputForm}" method="post">
 			<input type="hidden" th:name="serviceId" th:value="${serviceKey.serviceId}" />
 			<select class="form-control" th:field="*{groupId}">
 				<option th:each="group : ${groupList}" th:value="${group}" th:label="${group}" />
@@ -22,15 +22,15 @@
 				<td class="text-center"><strong>ID</strong></td>
 				<td class="text-center"><strong>詳細</strong></td>
 			</tr>
-			<tr th:each="dataSource : ${dataSourceList}">
+			<tr th:each="connection : ${connectionList}">
 				<td>
-					<div th:text="${dataSource.groupId}" />
+					<div th:text="${connection.group}" />
 				</td>
 				<td>
-					<div th:text="${dataSource.dataSourceId}" />
+					<div th:text="${connection.id}" />
 				</td>
 				<td class="text-center">
-					<a th:href="@{'/' + ${serviceKey.serviceId} + '/dataSource'(group=${dataSource.groupId}, dataSource=${dataSource.dataSourceId})}">詳細</a>
+					<a th:href="@{'/' + ${serviceKey.serviceId} + '/dataSource'(group=${connection.group}, dataSource=${connection.id})}">詳細</a>
 				</td>
 			</tr>
 		</table>

@@ -105,4 +105,9 @@ public class ZookeeperRepository {
 		String result = zooKeeper.getData(PathManager.getUuidPath(uuid));
 		return CommonUtil.jsonToObject(result, DataSourceKey.class);
 	}
+	
+	public int getConnectionNum(DataSourceKey key) throws Exception{
+		List<String> children = zooKeeper.getChildren(PathManager.getDataSourcePath(key));
+		return children.size();
+	}
 }

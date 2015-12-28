@@ -50,18 +50,25 @@ public class JailerController {
 	public String group(
 			@PathVariable String service,
 			Model model) throws Exception {
-
+		
+		// サイドメニューリンク
 		model.addAttribute("service", service);
-
+		
 		ServiceKey key = new ServiceKey();
 		key.setServiceId(service);
-
+		
+		// ページ共通キー
 		model.addAttribute("serviceKey", key);
+		
+		// 登録時グループリスト
 		model.addAttribute("groupList", jailerService.getGroupList(key));
-		model.addAttribute("dataSourceKey", new DataSourceKey());
-		model.addAttribute("dataSourceList", jailerService.getDataSourceKeyList(key));
-
-
+		
+		// 登録フォーム
+		model.addAttribute("dataSourceInputForm", new DataSourceKey());
+		
+		// 一覧
+		model.addAttribute("connectionList", jailerService.getConnectionInfoList(key));
+		
 		model.addAttribute("pageName", "group");
 		return "common_frame";
 	}
