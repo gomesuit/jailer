@@ -84,6 +84,9 @@ public class JdbcRepositoryCurator {
 	
 	public void repairConnectionNode(ConnectionKey key, ConnectionInfo info) throws Exception{
 		String data = CommonUtil.objectToJson(info);
+		if(isExistsConnectionNode(key)){
+			client.delete().forPath(PathManager.getConnectionPath(key));
+		}
 		client.create().withMode(CreateMode.EPHEMERAL).forPath(PathManager.getConnectionPath(key), data.getBytes(charset));
 	}
 	
