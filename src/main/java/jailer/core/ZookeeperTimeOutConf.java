@@ -1,4 +1,4 @@
-package jailer.web.zookeeper;
+package jailer.core;
 
 public class ZookeeperTimeOutConf {
 	private final int sessionTimeoutMs;

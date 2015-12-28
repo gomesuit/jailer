@@ -1,5 +1,7 @@
 package jailer.web.zookeeper;
 
+import jailer.core.ZookeeperTimeOutConf;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -18,8 +20,8 @@ public class JailerZookeeperCurator {
 	private final String connectString;
 	
 	// Timeout
-	private static final int default_sessionTimeoutMs = 6 * 1000;
-	private static final int default_connectionTimeoutMs = 5 * 1000;
+	private static final int default_sessionTimeoutMs = 60 * 1000;
+	private static final int default_connectionTimeoutMs = 15 * 1000;
 	
 	// ExponentialBackoffRetry
 	private static final int default_baseSleepTimeMs = 1000;

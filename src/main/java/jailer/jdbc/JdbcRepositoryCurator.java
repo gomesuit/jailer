@@ -21,6 +21,7 @@ import org.apache.zookeeper.data.Stat;
 
 import jailer.core.CommonUtil;
 import jailer.core.PathManager;
+import jailer.core.ZookeeperTimeOutConf;
 import jailer.core.model.ConnectionInfo;
 import jailer.core.model.ConnectionKey;
 import jailer.core.model.DataSourceKey;
@@ -29,15 +30,32 @@ import jailer.core.model.JailerDataSource;
 public class JdbcRepositoryCurator {
 	private final CuratorFramework client;
 	private static final Charset charset = StandardCharsets.UTF_8;
+
+	// Timeout
+	private static final int default_sessionTimeoutMs = 6 * 1000;
+	private static final int default_connectionTimeoutMs = 5 * 1000;
+	
+	// ExponentialBackoffRetry
+	private static final int default_baseSleepTimeMs = 1000;
+	private static final int default_maxRetries = 3;
 	
 	public JdbcRepositoryCurator(String connectString){
-		RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
-		//RetryPolicy retryPolicy = new RetryOneTime(1000);
-		//this.client = CuratorFrameworkFactory.newClient(host + ":" + port, retryPolicy);
+		this(connectString, getDefaultRetryPolicy(), getDefaultZookeeperTimeOutConf());
+	}
+	
+	private static ZookeeperTimeOutConf getDefaultZookeeperTimeOutConf() {
+		return new ZookeeperTimeOutConf(default_sessionTimeoutMs, default_connectionTimeoutMs);
+	}
+
+	private static RetryPolicy getDefaultRetryPolicy() {
+		return new ExponentialBackoffRetry(default_baseSleepTimeMs, default_maxRetries);
+	}
+
+	public JdbcRepositoryCurator(String connectString, RetryPolicy retryPolicy, ZookeeperTimeOutConf conf){
 		this.client = CuratorFrameworkFactory.builder().
         connectString(connectString).
-        sessionTimeoutMs(6 * 1000).
-        connectionTimeoutMs(5 * 1000).
+        sessionTimeoutMs(conf.getSessionTimeoutMs()).
+        connectionTimeoutMs(conf.getConnectionTimeoutMs()).
         retryPolicy(retryPolicy).
         build();
 		this.client.getCuratorListenable().addListener(new Listener());
