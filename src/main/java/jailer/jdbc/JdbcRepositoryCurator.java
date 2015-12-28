@@ -164,6 +164,7 @@ public class JdbcRepositoryCurator {
 			// TODO Auto-generated method stub
 			System.out.println("ConnectionStateListener newState : " + newState);
 			switch(newState){
+				
 			case RECONNECTED:
 				for(Entry<ConnectionKey, CuratorWatcher> keyValue : SessionExpiredWatcherMap.entrySet()){
 					try {

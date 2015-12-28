@@ -51,7 +51,7 @@ public class JailerConnection implements Connection{
 		@Override
 		public void process(WatchedEvent event) throws Exception {
 			if(realConnection.isClosed()) return;
-
+			
 			System.out.println("DataSourceWatcher.process! : " + event.getType());
 			System.out.println("Path : " + event.getPath());
 			System.out.println("key : " + key.getConnectionId());
@@ -59,11 +59,17 @@ public class JailerConnection implements Connection{
 			System.out.println("KeeperState : " + event.getState());
 			
 			if(event.getType() == EventType.NodeDataChanged){
-				
 				//TODO existsとgetDataを分けるとイベントを取り逃す可能性がある
-				Connection newConnection = driver.reCreateConnection();
+				Connection newConnection = null;
+				try{
+					newConnection = driver.reCreateConnection();
+				}catch(Exception e){
+					return;
+				}finally{
+					driver.dataSourceWatcher(key, new DataSourceWatcher());
+				}
+				
 				ConnectionKey newKey = driver.createConnection(key);
-				driver.dataSourceWatcher(newKey, new DataSourceWatcher());
 				
 //				newConnection.setAutoCommit(realConnection.getAutoCommit());
 //				newConnection.setCatalog(realConnection.getCatalog());
