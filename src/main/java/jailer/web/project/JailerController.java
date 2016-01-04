@@ -31,10 +31,12 @@ public class JailerController {
 	private JailerService jailerService;
 
 	@RequestMapping("/")
-	public String top(Model model) {
+	public String top(
+			Model model,
+			HttpServletRequest request) {
 		model.addAttribute("serviceList", jailerService.getServiceList());
-
-		model.addAttribute("pageName", "top");
+		
+		request.setAttribute("pageName", "top");
 		return "common_frame";
 	}
 	
@@ -57,16 +59,17 @@ public class JailerController {
 				throws Exception {
 			
 			List<String> urlSplit = Arrays.asList(request.getRequestURI().split("/"));
+			String pageName = (String)request.getAttribute("pageName");
 			
 			List<SideMenu> menuList = new ArrayList<>();
 			
 			if(urlSplit.size() == 0){
-				menuList.add(new SideMenu("/", "ServiceList", "top"));
+				menuList.add(new SideMenu("/", "ServiceList", pageName.equals("top")));
 			}else{
 				String service = urlSplit.get(2);
-				menuList.add(new SideMenu("/", "ServiceList", "top"));
-				menuList.add(new SideMenu("/project/" + service + "/group", "Group", "service"));
-				menuList.add(new SideMenu("/project/" + service + "/list", "Connection", "group"));
+				menuList.add(new SideMenu("/", "ServiceList", pageName.equals("top")));
+				menuList.add(new SideMenu("/project/" + service + "/group", "Group", pageName.equals("service")));
+				menuList.add(new SideMenu("/project/" + service + "/list", "Connection", pageName.equals("group")));
 			}
 			
 			request.setAttribute("menuList", menuList);
@@ -83,7 +86,8 @@ public class JailerController {
 	@RequestMapping("/project/{service}/group")
 	public String service(
 			@PathVariable String service,
-			Model model) {
+			Model model,
+			HttpServletRequest request) {
 
 		model.addAttribute("service", service);
 		
@@ -96,14 +100,16 @@ public class JailerController {
 		// 一覧
 		model.addAttribute("groupList", jailerService.getGroupList(key));
 
-		model.addAttribute("pageName", "service");
+		//model.addAttribute("pageName", "service");
+		request.setAttribute("pageName", "service");
 		return "common_frame";
 	}
 
 	@RequestMapping("/project/{service}/list")
 	public String group(
 			@PathVariable String service,
-			Model model) throws Exception {
+			Model model,
+			HttpServletRequest request) throws Exception {
 		
 		// サイドメニューリンク
 		model.addAttribute("service", service);
@@ -123,7 +129,8 @@ public class JailerController {
 		// 一覧
 		model.addAttribute("connectionList", jailerService.getConnectionInfoList(key));
 		
-		model.addAttribute("pageName", "group");
+		//model.addAttribute("pageName", "group");
+		request.setAttribute("pageName", "group");
 		return "common_frame";
 	}
 
@@ -132,7 +139,8 @@ public class JailerController {
 			@PathVariable String service,
 			@RequestParam(value = "group", required = true) String group,
 			@RequestParam(value = "dataSource", required = true) String dataSourceId,
-			Model model) throws Exception {
+			Model model,
+			HttpServletRequest request) throws Exception {
 
 		model.addAttribute("service", service);
 	
@@ -157,7 +165,8 @@ public class JailerController {
 	
 		model.addAttribute("connectionList", jailerService.getConnectionList(key));
 	
-		model.addAttribute("pageName", "datasource");
+		//model.addAttribute("pageName", "datasource");
+		request.setAttribute("pageName", "datasource");
 		return "common_frame";
 	}
 

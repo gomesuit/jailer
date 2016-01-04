@@ -36,8 +36,8 @@
 	<div class="col-sm-3 col-md-2 sidebar">
 		<ul class="nav nav-sidebar">
 			<div th:each="menu : ${menuList}" th:remove="tag">
-				<li class="active" th:if="${pageName} == ${menu.pageName}"><a th:href="${menu.url}" th:text="${menu.name}"><span class="sr-only">(current)</span></a></li>
-				<li th:unless="${pageName} == ${menu.pageName}"><a th:href="${menu.url}" th:text="${menu.name}" /></li>
+				<li class="active" th:if="${menu.active} == true"><a th:href="${menu.url}" th:text="${menu.name}"><span class="sr-only">(current)</span></a></li>
+				<li th:unless="${menu.active} == true"><a th:href="${menu.url}" th:text="${menu.name}" /></li>
 			</div>
 		</ul>
 	</div>

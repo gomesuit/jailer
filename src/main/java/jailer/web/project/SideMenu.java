@@ -3,13 +3,13 @@ package jailer.web.project;
 public class SideMenu {
 	private String url;
 	private String name;
-	private String pageName;
+	private boolean active;
 	
-	public SideMenu(String url, String name, String pageName) {
+	public SideMenu(String url, String name, boolean active) {
 		super();
 		this.url = url;
 		this.name = name;
-		this.pageName = pageName;
+		this.active = active;
 	}
 	
 	public String getUrl() {
@@ -18,7 +18,7 @@ public class SideMenu {
 	public String getName() {
 		return name;
 	}
-	public String getPageName() {
-		return pageName;
+	public boolean isActive() {
+		return active;
 	}
 }
