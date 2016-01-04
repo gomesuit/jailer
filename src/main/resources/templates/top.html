@@ -11,7 +11,7 @@
 		</thead>
 		<tbody>
 			<tr th:each="service : ${serviceList}">
-				<td><a th:href="@{'/' + ${service} + '/group'}" th:text="${service}">test</a></td>
+				<td><a th:href="@{'/project/' + ${service} + '/group'}" th:text="${service}">test</a></td>
 			</tr>
 		</tbody>
 	</table>

@@ -35,12 +35,10 @@
 <div th:fragment="sidebar" th:remove="tag">
 	<div class="col-sm-3 col-md-2 sidebar">
 		<ul class="nav nav-sidebar">
-			<li class="active" th:if="${pageName} == top"><a th:href="@{'/'}">Overview<span class="sr-only">(current)</span></a></li>
-			<li th:unless="${pageName} == top"><a th:href="@{'/'}">Overview </a></li>
-			<li class="active" th:if="${pageName} == service"><a th:href="@{'/' + ${service} + '/group'}">Group<span class="sr-only">(current)</span></a></li>
-			<li th:unless="${pageName} == service"><a th:href="@{'/' + ${service} + '/group'}">Group</a></li>
-			<li class="active" th:if="${pageName} == group"><a th:href="@{'/' + ${service} + '/list'}">Connection<span class="sr-only">(current)</span></a></li>
-			<li th:unless="${pageName} == group"><a th:href="@{'/' + ${service} + '/list'}">Connection</a></li>
+			<div th:each="menu : ${menuList}" th:remove="tag">
+				<li class="active" th:if="${pageName} == ${menu.pageName}"><a th:href="${menu.url}" th:text="${menu.name}"><span class="sr-only">(current)</span></a></li>
+				<li th:unless="${pageName} == ${menu.pageName}"><a th:href="${menu.url}" th:text="${menu.name}" /></li>
+			</div>
 		</ul>
 	</div>
 </div>

@@ -1,4 +1,4 @@
-package jailer.web;
+package jailer.web.project;
 
 import jailer.core.model.DataSourceKey;
 

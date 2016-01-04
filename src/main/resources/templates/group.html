@@ -36,7 +36,7 @@
 					<div th:text="${connection.uuid}" />
 				</td>
 				<td class="text-center">
-					<a th:href="@{'/' + ${serviceKey.serviceId} + '/dataSource'(group=${connection.group}, dataSource=${connection.id})}">詳細</a>
+					<a th:href="@{'/project/' + ${serviceKey.serviceId} + '/dataSource'(group=${connection.group}, dataSource=${connection.id})}">詳細</a>
 				</td>
 				<td class="text-center">
 					<form class="form-inline" action="#" th:action="@{/dataSource/delete}" th:object="${dataSourceInputForm}" method="post">

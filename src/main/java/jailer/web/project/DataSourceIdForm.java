@@ -1,4 +1,4 @@
-package jailer.web;
+package jailer.web.project;
 
 public class DataSourceIdForm {
 	private String dataSourceId;
