@@ -100,7 +100,6 @@ public class JailerController {
 		// 一覧
 		model.addAttribute("groupList", jailerService.getGroupList(key));
 
-		//model.addAttribute("pageName", "service");
 		request.setAttribute("pageName", "service");
 		return "common_frame";
 	}
@@ -129,7 +128,6 @@ public class JailerController {
 		// 一覧
 		model.addAttribute("connectionList", jailerService.getConnectionInfoList(key));
 		
-		//model.addAttribute("pageName", "group");
 		request.setAttribute("pageName", "group");
 		return "common_frame";
 	}
@@ -165,7 +163,6 @@ public class JailerController {
 	
 		model.addAttribute("connectionList", jailerService.getConnectionList(key));
 	
-		//model.addAttribute("pageName", "datasource");
 		request.setAttribute("pageName", "datasource");
 		return "common_frame";
 	}
