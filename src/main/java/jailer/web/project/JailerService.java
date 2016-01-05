@@ -111,6 +111,14 @@ public class JailerService {
 	}
 
 	
+	public void registService(ServiceKey key) throws Exception{
+		repository.registService(key);
+	}
+	
+	public void deleteService(ServiceKey key) throws Exception{
+		repository.deleteService(key);
+	}
+	
 	public void registGroup(GroupKey key) throws Exception{
 		repository.registGroup(key);
 	}

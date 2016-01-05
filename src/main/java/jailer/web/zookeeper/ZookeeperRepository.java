@@ -33,6 +33,14 @@ public class ZookeeperRepository {
 		return zooKeeper.getConnectString();
 	}
 
+	public void registService(ServiceKey key) throws Exception{
+		zooKeeper.createDataForPersistent(PathManager.getServicePath(key), "");
+	}
+
+	public void deleteService(ServiceKey key) throws Exception{
+		zooKeeper.delete(PathManager.getServicePath(key));
+	}
+
 	public void registGroup(GroupKey key) throws Exception{
 		zooKeeper.createDataForPersistent(PathManager.getGroupPath(key), "");
 	}
