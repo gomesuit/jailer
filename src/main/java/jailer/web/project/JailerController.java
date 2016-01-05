@@ -1,11 +1,6 @@
 package jailer.web.project;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import jailer.core.model.DataSourceKey;
 import jailer.core.model.GroupKey;
@@ -14,7 +9,6 @@ import jailer.core.model.PropertyContents;
 import jailer.core.model.ServiceKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,9 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.MappedInterceptor;
 
 @Controller
 public class JailerController {
@@ -39,49 +30,6 @@ public class JailerController {
 		
 		request.setAttribute("pageName", "top");
 		return "common_frame";
-	}
-	
-	@Bean
-	public MappedInterceptor interceptor() {
-		return new MappedInterceptor(new String[]{"/", "/project/**"}, new PageNameInterceptor());
-	}
-	
-	private class PageNameInterceptor implements HandlerInterceptor{
-
-		@Override
-		public void afterCompletion(HttpServletRequest arg0,
-				HttpServletResponse arg1, Object arg2, Exception arg3)
-				throws Exception {
-		}
-
-		@Override
-		public void postHandle(HttpServletRequest request,
-				HttpServletResponse response, Object obj, ModelAndView mav)
-				throws Exception {
-			
-			List<String> urlSplit = Arrays.asList(request.getRequestURI().split("/"));
-			String pageName = (String)request.getAttribute("pageName");
-			
-			List<SideMenu> menuList = new ArrayList<>();
-			
-			if(urlSplit.size() == 0){
-				menuList.add(new SideMenu("/", "ServiceList", pageName.equals("top")));
-			}else{
-				String service = urlSplit.get(2);
-				menuList.add(new SideMenu("/", "ServiceList", pageName.equals("top")));
-				menuList.add(new SideMenu("/project/" + service + "/group", "Group", pageName.equals("service")));
-				menuList.add(new SideMenu("/project/" + service + "/list", "Connection", pageName.equals("group")));
-			}
-			
-			request.setAttribute("menuList", menuList);
-		}
-
-		@Override
-		public boolean preHandle(HttpServletRequest arg0,
-				HttpServletResponse arg1, Object arg2) throws Exception {
-			return true;
-		}
-		
 	}
 
 	@RequestMapping("/project/{service}/group")
