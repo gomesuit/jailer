@@ -1,7 +1,5 @@
 package jailer.jdbc;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +18,8 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
 import jailer.core.CommonUtil;
+import jailer.core.JailerEncryption;
+import jailer.core.JailerNonEncryption;
 import jailer.core.PathManager;
 import jailer.core.ZookeeperTimeOutConf;
 import jailer.core.model.ConnectionInfo;
@@ -29,7 +29,7 @@ import jailer.core.model.JailerDataSource;
 
 public class JdbcRepositoryCurator {
 	private final CuratorFramework client;
-	private static final Charset charset = StandardCharsets.UTF_8;
+	private final JailerEncryption encryption = new JailerNonEncryption();
 
 	// Timeout
 	private static final int default_sessionTimeoutMs = 6 * 1000;
@@ -69,7 +69,7 @@ public class JdbcRepositoryCurator {
 	
 	public JailerDataSource getJailerDataSource(DataSourceKey key) throws Exception{
 		byte[] result = client.getData().forPath(PathManager.getDataSourcePath(key));
-		return CommonUtil.jsonToObject(new String(result, charset), JailerDataSource.class);
+		return CommonUtil.jsonToObject(encryption.decoded(result), JailerDataSource.class);
 	}
 	
 	public boolean isExistsConnectionNode(ConnectionKey key) throws Exception{
@@ -84,7 +84,7 @@ public class JdbcRepositoryCurator {
 	
 	public ConnectionKey registConnection(DataSourceKey key, ConnectionInfo info) throws Exception{
 		String data = CommonUtil.objectToJson(info);
-		String connectionPath = client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(PathManager.getDataSourcePath(key) + "/", data.getBytes(charset));
+		String connectionPath = client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(PathManager.getDataSourcePath(key) + "/", encryption.encode(data));
 		
 		ConnectionKey connectionKey = new ConnectionKey();
 		connectionKey.setServiceId(key.getServiceId());
@@ -104,7 +104,7 @@ public class JdbcRepositoryCurator {
 		if(isExistsConnectionNode(key)){
 			client.delete().forPath(PathManager.getConnectionPath(key));
 		}
-		client.create().withMode(CreateMode.EPHEMERAL).forPath(PathManager.getConnectionPath(key), data.getBytes(charset));
+		client.create().withMode(CreateMode.EPHEMERAL).forPath(PathManager.getConnectionPath(key), encryption.encode(data));
 	}
 	
 	public void deleteConnection(ConnectionKey key) throws Exception{
@@ -141,7 +141,7 @@ public class JdbcRepositoryCurator {
 	
 	public DataSourceKey getDataSourceKey(String uuid) throws Exception{
 		byte[] result = client.getData().forPath(PathManager.getUuidPath(uuid));
-		return CommonUtil.jsonToObject(new String(result, charset), DataSourceKey.class);
+		return CommonUtil.jsonToObject(encryption.decoded(result), DataSourceKey.class);
 	}
 
 	private class DefaultListener implements CuratorListener{

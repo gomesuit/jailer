@@ -1,9 +1,9 @@
 package jailer.web.zookeeper;
 
+import jailer.core.JailerEncryption;
+import jailer.core.JailerNonEncryption;
 import jailer.core.ZookeeperTimeOutConf;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.curator.RetryPolicy;
@@ -15,9 +15,9 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 
 public class JailerZookeeperCurator {
-	private static final Charset charset = StandardCharsets.UTF_8;
 	private final CuratorFramework client;
 	private final String connectString;
+	private final JailerEncryption encryption = new JailerNonEncryption();
 	
 	// Timeout
 	private static final int default_sessionTimeoutMs = 60 * 1000;
@@ -55,16 +55,18 @@ public class JailerZookeeperCurator {
 	}
 
 	public void createDataForPersistent(String path, String data) throws Exception {
-		client.create().withMode(CreateMode.PERSISTENT).forPath(path, data.getBytes(charset));
+		client.create().withMode(CreateMode.PERSISTENT).forPath(path, encryption.encode(data));
 	}
 	
 	public String getData(String path) throws Exception{
 		byte[] strByte = client.getData().forPath(path);
-		return new String(strByte, charset);
+		//return new String(strByte, charset);
+		return encryption.decoded(strByte);
 	}
 	
 	public void setData(String path, String data) throws Exception{
-		client.setData().forPath(path, data.getBytes(charset));
+		//client.setData().forPath(path, data.getBytes(charset));
+		client.setData().forPath(path, encryption.encode(data));
 	}
 	
 	public List<String> getChildren(String path) throws Exception{
@@ -72,11 +74,11 @@ public class JailerZookeeperCurator {
 	}
 
 	public void createDataForEphemeral(String path, String data) throws Exception {
-		client.create().withMode(CreateMode.EPHEMERAL).forPath(path, data.getBytes(charset));
+		client.create().withMode(CreateMode.EPHEMERAL).forPath(path, encryption.encode(data));
 	}
 
 	public String createDataForEphemeralSequential(String path, String data) throws Exception {
-		return client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path, data.getBytes(charset));
+		return client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path, encryption.encode(data));
 	}
 
 	public void delete(String path) throws Exception {
