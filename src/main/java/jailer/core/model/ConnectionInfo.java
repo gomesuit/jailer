@@ -11,7 +11,8 @@ public class ConnectionInfo {
 	private String ipAddress;
 	private Date sinceConnectTime;
 	private String connectUrl;
-	private Map<String, String> propertyList;
+	private boolean hide;
+	private Map<String, PropertyContents> propertyList;
 	private Map<String, String> optionalParam;
 	
 	public String getHost() {
@@ -32,10 +33,16 @@ public class ConnectionInfo {
 	public void setConnectUrl(String connectUrl) {
 		this.connectUrl = connectUrl;
 	}
-	public Map<String, String> getPropertyList() {
+	public boolean isHide() {
+		return hide;
+	}
+	public void setHide(boolean hide) {
+		this.hide = hide;
+	}
+	public Map<String, PropertyContents> getPropertyList() {
 		return propertyList;
 	}
-	public void setPropertyList(Map<String, String> propertyList) {
+	public void setPropertyList(Map<String, PropertyContents> propertyList) {
 		this.propertyList = propertyList;
 	}
 	public String getIpAddress() {

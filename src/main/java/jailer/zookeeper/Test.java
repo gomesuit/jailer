@@ -1,21 +1,17 @@
 package jailer.zookeeper;
 
 import jailer.core.model.JailerDataSource;
+import jailer.core.model.PropertyContents;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.ACL;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.apache.zookeeper.ZooDefs.Ids.*;
-import static org.apache.zookeeper.ZooDefs.Perms.*;
 
 public class Test {
 
@@ -25,8 +21,8 @@ public class Test {
 		//acls.add(new ACL(ALL, ANYONE_ID_UNSAFE));
 		JailerDataSource jailerDataSource = new JailerDataSource();
 		jailerDataSource.setUrl("jdbc:mysql://localhost/jailer");
-		jailerDataSource.addProperty("user", "jailer");
-		jailerDataSource.addProperty("password", "password");
+		jailerDataSource.addProperty("user", new PropertyContents("jailer", false));
+		jailerDataSource.addProperty("password", new PropertyContents("password", false));
 		ObjectMapper mapper = new ObjectMapper();
 		String json = mapper.writeValueAsString(jailerDataSource);
 		

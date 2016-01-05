@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import jailer.core.model.DataSourceKey;
 import jailer.core.model.GroupKey;
 import jailer.core.model.JailerDataSource;
+import jailer.core.model.PropertyContents;
 import jailer.core.model.ServiceKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,11 +205,12 @@ public class JailerController {
 	}
 
 	@RequestMapping(value = "/dataSource/update", method = RequestMethod.POST)
-	public String registRole(@ModelAttribute DataSourceForm form,
+	public String registDataSource(@ModelAttribute DataSourceForm form,
 			HttpServletRequest request) throws Exception {
 		
 		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
 		jailerDataSource.setUrl(form.getUrl());
+		jailerDataSource.setHide(form.isHide());
 
 		jailerService.registDataSource(form, jailerDataSource);
 
@@ -222,7 +224,7 @@ public class JailerController {
 			HttpServletRequest request) throws Exception {
 		
 		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
-		jailerDataSource.addProperty(form.getKey(), form.getValue());
+		jailerDataSource.addProperty(form.getKey(), new PropertyContents(form.getValue(), form.isHide()));
 
 		jailerService.registDataSource(form, jailerDataSource);
 

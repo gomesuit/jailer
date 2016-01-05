@@ -4,6 +4,7 @@ import jailer.core.model.DataSourceKey;
 
 public class DataSourceForm extends DataSourceKey{
 	private String url;
+	private boolean hide;
 	
 	public DataSourceForm(){}
 
@@ -19,5 +20,13 @@ public class DataSourceForm extends DataSourceKey{
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public boolean isHide() {
+		return hide;
+	}
+
+	public void setHide(boolean hide) {
+		this.hide = hide;
 	}
 }

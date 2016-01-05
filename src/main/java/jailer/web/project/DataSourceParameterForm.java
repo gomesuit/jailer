@@ -5,6 +5,7 @@ import jailer.core.model.DataSourceKey;
 public class DataSourceParameterForm extends DataSourceKey{
 	private String key;
 	private String value;
+	private boolean hide;
 	
 	public DataSourceParameterForm(){}
 	
@@ -25,5 +26,11 @@ public class DataSourceParameterForm extends DataSourceKey{
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public boolean isHide() {
+		return hide;
+	}
+	public void setHide(boolean hide) {
+		this.hide = hide;
 	}
 }
