@@ -14,7 +14,7 @@ public class Test6 {
 	public static void main(String[] args) throws SQLException {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName("jailer.jdbc.JailerDriver");
-		ds.setUrl("jdbc:jailer://192.168.33.11:2181/e5ed5a1d-3b22-4b51-806c-024bd1f8b61f?project=testproject");
+		ds.setUrl("jdbc:jailer://192.168.33.11:2181/97b95fa1-7117-4e5f-93d6-ddf2c4e756b2?project=testproject");
 		ds.setInitialSize(10);
 		
 		DataSource dataSource = ds;

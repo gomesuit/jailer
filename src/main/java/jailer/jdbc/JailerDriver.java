@@ -4,6 +4,7 @@ import jailer.core.model.ConnectionInfo;
 import jailer.core.model.ConnectionKey;
 import jailer.core.model.DataSourceKey;
 import jailer.core.model.JailerDataSource;
+import jailer.core.model.PropertyContents;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -16,6 +17,8 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -34,7 +37,7 @@ public class JailerDriver implements Driver{
 	public Connection reCreateConnection() throws Exception{
 		this.jailerDataSource = getJailerDataSource(jailerJdbcURI);
 		info.clear();
-		info.putAll(jailerDataSource.getPropertyList());
+		updateInfo(info, jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = getUnderlyingDriver(realUrl);
 //		if (d != null) {
@@ -43,6 +46,12 @@ public class JailerDriver implements Driver{
 		Connection newConnection = d.connect(realUrl, info);
 		lastUnderlyingDriverRequested = d;
 		return newConnection;
+	}
+	
+	private void updateInfo(Properties info, Map<String, PropertyContents> propertyList){
+		for(Entry<String, PropertyContents> keyValue : propertyList.entrySet()){
+			info.put(keyValue.getKey(), keyValue.getValue().getValue());
+		}
 	}
 
 	public ConnectionKey createConnection(DataSourceKey key) throws Exception{
@@ -108,7 +117,7 @@ public class JailerDriver implements Driver{
 			if(this.jailerDataSource == null){
 				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 			}
-			info.putAll(jailerDataSource.getPropertyList());
+			updateInfo(info, jailerDataSource.getPropertyList());
 		} catch (Exception e) {
 			throw new SQLException(e);
 		}
@@ -119,6 +128,8 @@ public class JailerDriver implements Driver{
 		try {
 			DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(jailerJdbcURI));
 			ConnectionKey connectionKey = createConnection(key);
+			System.out.println(realUrl);
+			System.out.println(info);
 			return new JailerConnection(d.connect(realUrl, info), this, connectionKey);
 		} catch (Exception e) {
 			throw new SQLException(e);
