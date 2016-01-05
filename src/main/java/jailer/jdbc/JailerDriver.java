@@ -32,19 +32,11 @@ public class JailerDriver implements Driver{
 	private JdbcRepositoryCurator repository = null;
 	
 	public Connection reCreateConnection(URI jailerJdbcURI) throws Exception{
-		JailerDataSource jailerDataSource = null;
-		try {
-			jailerDataSource = getJailerDataSource(jailerJdbcURI);
-		} catch (Exception e) {
-			throw new SQLException(e);
-		}
+		JailerDataSource jailerDataSource = getJailerDataSource(jailerJdbcURI);
 		Properties info = new Properties();
 		updateInfo(info, jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = getUnderlyingDriver(realUrl);
-//		if (d != null) {
-//			lastUnderlyingDriverRequested = d;
-//		}
 		Connection newConnection = d.connect(realUrl, info);
 		lastUnderlyingDriverRequested = d;
 		return newConnection;
@@ -57,12 +49,7 @@ public class JailerDriver implements Driver{
 	}
 
 	public ConnectionKey createConnection(DataSourceKey key, URI jailerJdbcURI) throws Exception{
-		JailerDataSource jailerDataSource = null;
-		try {
-			jailerDataSource = getJailerDataSource(jailerJdbcURI);
-		} catch (Exception e) {
-			throw new SQLException(e);
-		}
+		JailerDataSource jailerDataSource = getJailerDataSource(jailerJdbcURI);
 		ConnectionInfo connectionInfo = createConnectionInfo(jailerDataSource, jailerJdbcURI);
 		
 		ConnectionKey connectionKey = repository.registConnection(key, connectionInfo);

@@ -20,7 +20,6 @@ import org.apache.zookeeper.data.Stat;
 import jailer.core.CommonUtil;
 import jailer.core.JailerEncryption;
 import jailer.core.JailerEncryptionImpl;
-import jailer.core.JailerNonEncryption;
 import jailer.core.PathManager;
 import jailer.core.ZookeeperTimeOutConf;
 import jailer.core.model.ConnectionInfo;

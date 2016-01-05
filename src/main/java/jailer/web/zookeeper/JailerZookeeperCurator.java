@@ -2,7 +2,6 @@ package jailer.web.zookeeper;
 
 import jailer.core.JailerEncryption;
 import jailer.core.JailerEncryptionImpl;
-import jailer.core.JailerNonEncryption;
 import jailer.core.ZookeeperTimeOutConf;
 
 import java.util.List;
