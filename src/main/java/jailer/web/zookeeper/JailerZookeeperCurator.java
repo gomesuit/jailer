@@ -1,7 +1,7 @@
 package jailer.web.zookeeper;
 
+import jailer.core.JailerAESEncryption;
 import jailer.core.JailerEncryption;
-import jailer.core.JailerEncryptionImpl;
 import jailer.core.ZookeeperTimeOutConf;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import org.apache.zookeeper.Watcher;
 public class JailerZookeeperCurator {
 	private final CuratorFramework client;
 	private final String connectString;
-	private final JailerEncryption encryption = new JailerEncryptionImpl();
+	private final JailerEncryption encryption = new JailerAESEncryption();
 	
 	// Timeout
 	private static final int default_sessionTimeoutMs = 60 * 1000;
