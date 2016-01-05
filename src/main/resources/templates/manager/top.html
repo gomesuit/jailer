@@ -1,0 +1,18 @@
+
+<h1 class="page-header">Service</h1>
+
+<h2 class="sub-header">サービス一覧</h2>
+<div class="table-responsive">
+	<table class="table table-bordered" border="1" rules="all">
+		<thead>
+			<tr>
+				<td>service</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="service : ${serviceList}">
+				<td><a th:href="@{'/project/' + ${service} + '/group'}" th:text="${service}">test</a></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

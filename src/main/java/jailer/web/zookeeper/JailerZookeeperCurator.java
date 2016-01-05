@@ -60,12 +60,10 @@ public class JailerZookeeperCurator {
 	
 	public String getData(String path) throws Exception{
 		byte[] strByte = client.getData().forPath(path);
-		//return new String(strByte, charset);
 		return encryption.decoded(strByte);
 	}
 	
 	public void setData(String path, String data) throws Exception{
-		//client.setData().forPath(path, data.getBytes(charset));
 		client.setData().forPath(path, encryption.encode(data));
 	}
 	

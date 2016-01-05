@@ -27,7 +27,7 @@ public class JailerManagerController {
 	public String top(Model model) {
 		model.addAttribute("serviceList", jailerService.getServiceList());
 
-		model.addAttribute("pageName", "top");
+		model.addAttribute("pageName", "manager/top");
 		return "common_frame";
 	}
 	
