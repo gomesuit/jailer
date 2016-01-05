@@ -8,6 +8,7 @@ import jailer.core.model.PropertyContents;
 
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -28,15 +29,16 @@ public class JailerDriver implements Driver{
 
 	private Driver lastUnderlyingDriverRequested;
 	
-	private Properties info = new Properties();
-	private JailerDataSource jailerDataSource;
-	private URI jailerJdbcURI;
+	private JdbcRepositoryCurator repository = null;
 	
-	private JdbcRepositoryCurator repository;
-	
-	public Connection reCreateConnection() throws Exception{
-		this.jailerDataSource = getJailerDataSource(jailerJdbcURI);
-		info.clear();
+	public Connection reCreateConnection(URI jailerJdbcURI) throws Exception{
+		JailerDataSource jailerDataSource = null;
+		try {
+			jailerDataSource = getJailerDataSource(jailerJdbcURI);
+		} catch (Exception e) {
+			throw new SQLException(e);
+		}
+		Properties info = new Properties();
 		updateInfo(info, jailerDataSource.getPropertyList());
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = getUnderlyingDriver(realUrl);
@@ -54,7 +56,13 @@ public class JailerDriver implements Driver{
 		}
 	}
 
-	public ConnectionKey createConnection(DataSourceKey key) throws Exception{
+	public ConnectionKey createConnection(DataSourceKey key, URI jailerJdbcURI) throws Exception{
+		JailerDataSource jailerDataSource = null;
+		try {
+			jailerDataSource = getJailerDataSource(jailerJdbcURI);
+		} catch (Exception e) {
+			throw new SQLException(e);
+		}
 		ConnectionInfo connectionInfo = createConnectionInfo(jailerDataSource, jailerJdbcURI);
 		
 		ConnectionKey connectionKey = repository.registConnection(key, connectionInfo);
@@ -93,12 +101,11 @@ public class JailerDriver implements Driver{
 	}
 	
 	private JailerDataSource getJailerDataSource(URI uri) throws Exception{
-		if(this.jailerJdbcURI == null || !this.jailerJdbcURI.equals(uri)){
-			this.jailerJdbcURI = uri;
-			String connectString = JailerJdbcURIManager.getConnectString(jailerJdbcURI);
+		if(this.repository == null){
+			String connectString = JailerJdbcURIManager.getConnectString(uri);
 			repository = new JdbcRepositoryCurator(connectString);
 		}
-		DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(jailerJdbcURI));
+		DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(uri));
 		JailerDataSource jailerDataSource = repository.getJailerDataSource(key);
 		return jailerDataSource;
 	}
@@ -113,24 +120,29 @@ public class JailerDriver implements Driver{
 
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
+		URI jailerJdbcURI;
 		try {
-			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
-			}
-			updateInfo(info, jailerDataSource.getPropertyList());
+			jailerJdbcURI = JailerJdbcURIManager.getUri(url);
+		} catch (URISyntaxException e) {
+			throw new SQLException(e);
+		}
+		JailerDataSource jailerDataSource = null;
+		try {
+			jailerDataSource = getJailerDataSource(jailerJdbcURI);
 		} catch (Exception e) {
 			throw new SQLException(e);
 		}
 		String realUrl = jailerDataSource.getUrl();
 		Driver d = DriverManager.getDriver(realUrl);
 		lastUnderlyingDriverRequested = d;
-		info.putAll(this.info);
+		info.clear();
+		updateInfo(info, jailerDataSource.getPropertyList());
 		try {
 			DataSourceKey key = repository.getDataSourceKey(JailerJdbcURIManager.getUUID(jailerJdbcURI));
-			ConnectionKey connectionKey = createConnection(key);
+			ConnectionKey connectionKey = createConnection(key, JailerJdbcURIManager.getUri(url));
 			System.out.println(realUrl);
 			System.out.println(info);
-			return new JailerConnection(d.connect(realUrl, info), this, connectionKey);
+			return new JailerConnection(d.connect(realUrl, info), this, connectionKey, jailerJdbcURI);
 		} catch (Exception e) {
 			throw new SQLException(e);
 		}
@@ -138,10 +150,9 @@ public class JailerDriver implements Driver{
 
 	@Override
 	public boolean acceptsURL(String url) throws SQLException {
+		JailerDataSource jailerDataSource = null;
 		try {
-			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
-			}
+			jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 		} catch (Exception e) {
 			throw new SQLException(e);
 		}
@@ -156,14 +167,16 @@ public class JailerDriver implements Driver{
 
 	@Override
 	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
+		JailerDataSource jailerDataSource = null;
 		try {
-			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
-			}
+			jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
 		} catch (Exception e) {
 			throw new SQLException(e);
 		}
-		return lastUnderlyingDriverRequested.getPropertyInfo(url, info);
+		String realUrl = jailerDataSource.getUrl();
+		info.clear();
+		updateInfo(info, jailerDataSource.getPropertyList());
+		return lastUnderlyingDriverRequested.getPropertyInfo(realUrl, info);
 	}
 
 	@Override
@@ -194,21 +207,13 @@ public class JailerDriver implements Driver{
 	}
 	
 	private Driver getUnderlyingDriver(String url) throws SQLException{
-		try {
-			if(this.jailerDataSource == null){
-				this.jailerDataSource = getJailerDataSource(JailerJdbcURIManager.getUri(url));
-			}
-		} catch (Exception e) {
-			throw new SQLException(e);
-		}
-		String realUrl = jailerDataSource.getUrl();
 		Enumeration<Driver> e = DriverManager.getDrivers();
 
 		Driver d;
 		while (e.hasMoreElements()) {
 			d = e.nextElement();
 
-			if (d.acceptsURL(realUrl)) {
+			if (d.acceptsURL(url)) {
 				return d;
 			}
 		}

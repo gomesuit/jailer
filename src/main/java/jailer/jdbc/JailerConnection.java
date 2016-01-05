@@ -2,6 +2,7 @@ package jailer.jdbc;
 
 import jailer.core.model.ConnectionKey;
 
+import java.net.URI;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -30,11 +31,13 @@ public class JailerConnection implements Connection{
 	private JailerDriver driver;
 	private int statementNumber = 0;
 	private ConnectionKey key;
+	private URI jailerJdbcURI;
 	
-	public JailerConnection(Connection realConnection, JailerDriver driver, ConnectionKey key) throws Exception{
+	public JailerConnection(Connection realConnection, JailerDriver driver, ConnectionKey key, URI jailerJdbcURI) throws Exception{
 		this.realConnection = realConnection;
 		this.driver = driver;
 		this.key = key;
+		this.jailerJdbcURI = jailerJdbcURI;
 		driver.dataSourceWatcher(key, new DataSourceWatcher());
 	}
 	
@@ -62,13 +65,13 @@ public class JailerConnection implements Connection{
 				//TODO existsとgetDataを分けるとイベントを取り逃す可能性がある
 				Connection newConnection = null;
 				try{
-					newConnection = driver.reCreateConnection();
+					newConnection = driver.reCreateConnection(jailerJdbcURI);
 				}catch(Exception e){
 					driver.dataSourceWatcher(key, new DataSourceWatcher());
 					return;
 				}
 				
-				ConnectionKey newKey = driver.createConnection(key);
+				ConnectionKey newKey = driver.createConnection(key, jailerJdbcURI);
 				driver.dataSourceWatcher(newKey, new DataSourceWatcher());
 				
 //				newConnection.setAutoCommit(realConnection.getAutoCommit());
