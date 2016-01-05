@@ -111,10 +111,17 @@
 				<div th:text="${#dates.format(connection.value.sinceConnectTime, 'yyyy/MM/dd HH:mm:ss')}" />
 			</td>
 			<td>
-				<div th:text="${connection.value.connectUrl}" />
+				<div th:if="${connection.value.hide} == false" th:text="${connection.value.connectUrl}" />
+				<div th:if="${connection.value.hide} == true">●●●●●●●●●</div>
 			</td>
 			<td>
-				<div th:text="${connection.value.propertyList}" />
+				<div th:each="property : ${connection.value.propertyList}" th:remove="tag">
+					<span th:text="${property.key}" />
+					=
+					<span th:if="${property.value.hide} == false" th:text="${property.value.value}" />
+					<span th:if="${property.value.hide} == true">●●●●●●●●●</span>
+					<br />
+				</div>
 			</td>
 			<td>
 				<div th:text="${connection.value.optionalParam}" />
