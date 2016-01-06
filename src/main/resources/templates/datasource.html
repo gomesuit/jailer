@@ -104,7 +104,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr th:each="connection : ${connectionList}">
+		<tr th:each="connection : ${connectionList}" th:class="${connection.value.warning}? warning">
 			<td>
 				<div th:text="${connection.key}" />
 			</td>
