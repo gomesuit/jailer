@@ -35,4 +35,13 @@ public class JailerManagerController {
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
 	}
+
+	@RequestMapping(value = "/manager/service/delete", method = RequestMethod.POST)
+	public String deleteService(@ModelAttribute ServiceKey key,
+			HttpServletRequest request) throws Exception {
+		jailerService.deleteService(key);
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + referer;
+	}
 }

@@ -82,7 +82,7 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 			
 			List<SideMenu> menuList = new ArrayList<>();
 			
-			menuList.add(new SideMenu("/", "Service", pageName.equals("manager/top")));
+			menuList.add(new SideMenu("/manager", "Service", pageName.equals("manager/top")));
 			
 			request.setAttribute("menuList", menuList);
 		}
