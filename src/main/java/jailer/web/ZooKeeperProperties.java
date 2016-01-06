@@ -1,4 +1,4 @@
-package jailer;
+package jailer.web;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

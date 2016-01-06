@@ -1,4 +1,4 @@
-package jailer;
+package jailer.web;
 
 import jailer.web.project.SideMenu;
 
