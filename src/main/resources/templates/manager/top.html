@@ -7,7 +7,7 @@
 		<h3 class="panel-title">サービス</h3>
 	</div>
 	<div class="panel-body">
-		<form class="form-inline" action="#" th:action="@{/service/regist}" th:object="${serviceKey}" method="post">
+		<form class="form-inline" action="#" th:action="@{/manager/service/regist}" th:object="${serviceKey}" method="post">
 			<input type="text" class="form-control" th:field="*{serviceId}" placeholder="SERVICEID" />
 			<button type="submit" class="btn btn-primary">登録</button>
 		</form>

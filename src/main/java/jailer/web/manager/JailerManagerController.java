@@ -27,7 +27,7 @@ public class JailerManagerController {
 		return "common_frame";
 	}
 
-	@RequestMapping(value = "/service/regist", method = RequestMethod.POST)
+	@RequestMapping(value = "/manager/service/regist", method = RequestMethod.POST)
 	public String registService(@ModelAttribute ServiceKey key,
 			HttpServletRequest request) throws Exception {
 		jailerService.registService(key);

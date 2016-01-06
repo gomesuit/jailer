@@ -78,10 +78,12 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 		public void postHandle(HttpServletRequest request,
 				HttpServletResponse response, Object obj, ModelAndView mav)
 				throws Exception {
+
+			if(request.getMethod().equals("POST")){
+				return;
+			}
 			
 			String pageName = (String)request.getAttribute("pageName");
-			
-			System.out.println(pageName);
 			
 			List<SideMenu> menuList = new ArrayList<>();
 			
