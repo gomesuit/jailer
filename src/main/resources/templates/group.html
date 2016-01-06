@@ -1,13 +1,18 @@
 
-<h1 class="page-header">コネクション</h1>
+<h1>
+	<ol class="breadcrumb">
+		<li th:text="${service}" />
+		<li>コネクション</li>
+	</ol>
+</h1>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h3 class="panel-title">コネクション</h3>
 	</div>
 	<div class="panel-body">
-		<form class="form-inline" action="#" th:action="@{'/project/' + ${serviceKey.serviceId} + '/dataSource/regist'}" th:object="${dataSourceInputForm}" method="post">
-			<input type="hidden" th:name="serviceId" th:value="${serviceKey.serviceId}" />
+		<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/dataSource/regist'}" th:object="${dataSourceInputForm}" method="post">
+			<input type="hidden" th:name="serviceId" th:value="${service}" />
 			<select class="form-control" th:field="*{groupId}">
 				<option th:each="group : ${groupList}" th:value="${group}" th:label="${group}" />
 			</select>
@@ -36,11 +41,11 @@
 					<div th:text="${connection.uuid}" />
 				</td>
 				<td class="text-center">
-					<a th:href="@{'/project/' + ${serviceKey.serviceId} + '/dataSource'(group=${connection.group}, dataSource=${connection.id})}">詳細</a>
+					<a th:href="@{'/project/' + ${service} + '/dataSource'(group=${connection.group}, dataSource=${connection.id})}">詳細</a>
 				</td>
 				<td class="text-center">
-					<form class="form-inline" action="#" th:action="@{'/project/' + ${serviceKey.serviceId} + '/dataSource/delete'}" th:object="${dataSourceInputForm}" method="post">
-						<input type="hidden" th:name="serviceId" th:value="${serviceKey.serviceId}" />
+					<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/dataSource/delete'}" th:object="${dataSourceInputForm}" method="post">
+						<input type="hidden" th:name="serviceId" th:value="${service}" />
 						<input type="hidden" th:name="groupId" th:value="${connection.group}" />
 						<input type="hidden" th:name="dataSourceId" th:value="${connection.id}" />
 						<button type="submit" class="btn btn-danger btn-xs">

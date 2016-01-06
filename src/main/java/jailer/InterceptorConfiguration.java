@@ -36,17 +36,17 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 		public void postHandle(HttpServletRequest request,
 				HttpServletResponse response, Object obj, ModelAndView mav)
 				throws Exception {
+			List<String> urlSplit = Arrays.asList(request.getRequestURI().split("/"));
+			String service = urlSplit.get(2);
 			
 			if(request.getMethod().equals("POST")){
+				request.setAttribute("service", service);
 				return;
 			}
 			
-			List<String> urlSplit = Arrays.asList(request.getRequestURI().split("/"));
 			String pageName = (String)request.getAttribute("pageName");
 			
 			List<SideMenu> menuList = new ArrayList<>();
-
-			String service = urlSplit.get(2);
 			menuList.add(new SideMenu("/project/" + service + "/group", "Group", pageName.equals("service")));
 			menuList.add(new SideMenu("/project/" + service + "/list", "Connection", pageName.equals("group")));
 			

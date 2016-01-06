@@ -1,5 +1,12 @@
 
-<h1 class="page-header">コネクション詳細</h1>
+<h1>
+	<ol class="breadcrumb">
+		<li th:text="${service}" />
+		<li th:text="${dataSourceKey.groupId}" />
+		<li th:text="${dataSourceKey.dataSourceId}" />
+		<li>コネクション詳細</li>
+	</ol>
+</h1>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
@@ -18,8 +25,8 @@
 		<strong th:if="${jailerDataSource.hide} == false"><h4 th:text="${jailerDataSource.url}" /></strong>
 		<strong th:if="${jailerDataSource.hide} == true"><h4>●●●●●●●●●●●●●●●●●●</h4></strong>
 		<br />
-		<form class="form-inline" action="#" th:action="@{'/project/' + ${dataSourceKey.serviceId} + '/dataSource/update'}" th:object="${dataSourceForm}" method="post">
-			<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+		<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/dataSource/update'}" th:object="${dataSourceForm}" method="post">
+			<input type="hidden" th:name="serviceId" th:value="${service}" />
 			<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
 			<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
 			<input type="text" class="form-control" th:name="url" placeholder="url" />
@@ -37,8 +44,8 @@
 		<h3 class="panel-title">接続パラメータ</h3>
 	</div>
 	<div class="panel-body">
-		<form class="form-inline" action="#" th:action="@{'/project/' + ${dataSourceKey.serviceId} + '/dataSourceParameter/regist'}" th:object="${dataSourceParameterForm}" method="post">
-			<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+		<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/dataSourceParameter/regist'}" th:object="${dataSourceParameterForm}" method="post">
+			<input type="hidden" th:name="serviceId" th:value="${service}" />
 			<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
 			<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
 			<input type="text" class="form-control" th:field="*{key}" placeholder="KEY" />
@@ -68,8 +75,8 @@
 						<div th:if="${property.value.hide} == true">●●●●●●●●●</div>
 					</td>
 					<td  class="text-center">
-						<form action="#" th:action="@{'/project/' + ${dataSourceKey.serviceId} + '/dataSourceParameter/remove'}" th:object="${dataSourceParameterForm}" method="post">
-							<input type="hidden" th:name="serviceId" th:value="${dataSourceKey.serviceId}" />
+						<form action="#" th:action="@{'/project/' + ${service} + '/dataSourceParameter/remove'}" th:object="${dataSourceParameterForm}" method="post">
+							<input type="hidden" th:name="serviceId" th:value="${service}" />
 							<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
 							<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
 							<input type="hidden" th:name="key" th:value="${property.key}" />

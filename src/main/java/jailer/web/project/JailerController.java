@@ -37,8 +37,6 @@ public class JailerController {
 			@PathVariable String service,
 			Model model,
 			HttpServletRequest request) {
-
-		model.addAttribute("service", service);
 		
 		ServiceKey key = new ServiceKey();
 		key.setServiceId(service);
@@ -58,9 +56,6 @@ public class JailerController {
 			@PathVariable String service,
 			Model model,
 			HttpServletRequest request) throws Exception {
-		
-		// サイドメニューリンク
-		model.addAttribute("service", service);
 		
 		ServiceKey key = new ServiceKey();
 		key.setServiceId(service);
@@ -88,8 +83,6 @@ public class JailerController {
 			@RequestParam(value = "dataSource", required = true) String dataSourceId,
 			Model model,
 			HttpServletRequest request) throws Exception {
-
-		model.addAttribute("service", service);
 	
 		DataSourceKey key = new DataSourceKey();
 		key.setServiceId(service);
