@@ -20,7 +20,7 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new PageNameInterceptor()).addPathPatterns("/").addPathPatterns("/project/**");
+		registry.addInterceptor(new PageNameInterceptor()).addPathPatterns("/project/**");
 		registry.addInterceptor(new ManagerPageNameInterceptor()).addPathPatterns("/manager/**");
 	}
 	
@@ -45,15 +45,10 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 			String pageName = (String)request.getAttribute("pageName");
 			
 			List<SideMenu> menuList = new ArrayList<>();
-			
-			if(urlSplit.size() == 0){
-				menuList.add(new SideMenu("/", "ServiceList", pageName.equals("top")));
-			}else{
-				String service = urlSplit.get(2);
-				menuList.add(new SideMenu("/", "ServiceList", pageName.equals("top")));
-				menuList.add(new SideMenu("/project/" + service + "/group", "Group", pageName.equals("service")));
-				menuList.add(new SideMenu("/project/" + service + "/list", "Connection", pageName.equals("group")));
-			}
+
+			String service = urlSplit.get(2);
+			menuList.add(new SideMenu("/project/" + service + "/group", "Group", pageName.equals("service")));
+			menuList.add(new SideMenu("/project/" + service + "/list", "Connection", pageName.equals("group")));
 			
 			request.setAttribute("menuList", menuList);
 		}
@@ -87,7 +82,7 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 			
 			List<SideMenu> menuList = new ArrayList<>();
 			
-			menuList.add(new SideMenu("/", "ServiceList", pageName.equals("manager/top")));
+			menuList.add(new SideMenu("/", "Service", pageName.equals("manager/top")));
 			
 			request.setAttribute("menuList", menuList);
 		}
