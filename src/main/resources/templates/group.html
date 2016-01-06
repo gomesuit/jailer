@@ -6,7 +6,7 @@
 		<h3 class="panel-title">コネクション</h3>
 	</div>
 	<div class="panel-body">
-		<form class="form-inline" action="#" th:action="@{/dataSource/regist}" th:object="${dataSourceInputForm}" method="post">
+		<form class="form-inline" action="#" th:action="@{'/project/' + ${serviceKey.serviceId} + '/dataSource/regist'}" th:object="${dataSourceInputForm}" method="post">
 			<input type="hidden" th:name="serviceId" th:value="${serviceKey.serviceId}" />
 			<select class="form-control" th:field="*{groupId}">
 				<option th:each="group : ${groupList}" th:value="${group}" th:label="${group}" />
@@ -39,7 +39,7 @@
 					<a th:href="@{'/project/' + ${serviceKey.serviceId} + '/dataSource'(group=${connection.group}, dataSource=${connection.id})}">詳細</a>
 				</td>
 				<td class="text-center">
-					<form class="form-inline" action="#" th:action="@{/dataSource/delete}" th:object="${dataSourceInputForm}" method="post">
+					<form class="form-inline" action="#" th:action="@{'/project/' + ${serviceKey.serviceId} + '/dataSource/delete'}" th:object="${dataSourceInputForm}" method="post">
 						<input type="hidden" th:name="serviceId" th:value="${serviceKey.serviceId}" />
 						<input type="hidden" th:name="groupId" th:value="${connection.group}" />
 						<input type="hidden" th:name="dataSourceId" th:value="${connection.id}" />

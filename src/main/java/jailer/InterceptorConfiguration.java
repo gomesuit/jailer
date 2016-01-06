@@ -37,6 +37,10 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 				HttpServletResponse response, Object obj, ModelAndView mav)
 				throws Exception {
 			
+			if(request.getMethod().equals("POST")){
+				return;
+			}
+			
 			List<String> urlSplit = Arrays.asList(request.getRequestURI().split("/"));
 			String pageName = (String)request.getAttribute("pageName");
 			

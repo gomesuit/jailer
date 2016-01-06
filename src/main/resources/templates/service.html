@@ -6,7 +6,7 @@
 		<h3 class="panel-title">グループ</h3>
 	</div>
 	<div class="panel-body">
-		<form class="form-inline" action="#" th:action="@{/group/regist}" th:object="${groupKey}" method="post">
+		<form class="form-inline" action="#" th:action="@{'/project/' + ${groupKey.serviceId} + 'group/regist'}" th:object="${groupKey}" method="post">
 			<input type="hidden" th:name="serviceId" th:value="${service}" />	
 			<input type="text" class="form-control" th:field="*{groupId}" placeholder="GROUP" />
 			<button type="submit" class="btn btn-primary">登録</button>
@@ -24,7 +24,7 @@
 				<tr th:each="group : ${groupList}">
 					<td><div th:text="${group}" /></td>
 					<td class="text-center">
-						<form class="form-inline" action="#" th:action="@{/group/delete}" th:object="${groupKey}" method="post">
+						<form class="form-inline" action="#" th:action="@{'/project/' + ${groupKey.serviceId} + '/group/delete'}" th:object="${groupKey}" method="post">
 							<input type="hidden" th:name="serviceId" th:value="${service}" />	
 							<input type="hidden" th:name="groupId" th:value="${group}"  />
 							<button type="submit" class="btn btn-danger btn-xs">

@@ -116,7 +116,7 @@ public class JailerController {
 		return "common_frame";
 	}
 
-	@RequestMapping(value = "/dataSource/regist", method = RequestMethod.POST)
+	@RequestMapping(value = "/project/{service}/dataSource/regist", method = RequestMethod.POST)
 	public String registDataSourceId(@ModelAttribute DataSourceKey key,
 			HttpServletRequest request) throws Exception {
 		jailerService.registDataSourceId(key);
@@ -125,7 +125,7 @@ public class JailerController {
 		return "redirect:" + referer;
 	}
 
-	@RequestMapping(value = "/dataSource/delete", method = RequestMethod.POST)
+	@RequestMapping(value = "/project/{service}/dataSource/delete", method = RequestMethod.POST)
 	public String deleteDataSourceId(@ModelAttribute DataSourceKey key,
 			HttpServletRequest request) throws Exception {
 		jailerService.deleteDataSourceId(key);
@@ -134,7 +134,7 @@ public class JailerController {
 		return "redirect:" + referer;
 	}
 
-	@RequestMapping(value = "/group/regist", method = RequestMethod.POST)
+	@RequestMapping(value = "/project/{service}/group/regist", method = RequestMethod.POST)
 	public String registGroup(@ModelAttribute GroupKey key,
 			HttpServletRequest request) throws Exception {
 		jailerService.registGroup(key);
@@ -143,7 +143,7 @@ public class JailerController {
 		return "redirect:" + referer;
 	}
 
-	@RequestMapping(value = "/group/delete", method = RequestMethod.POST)
+	@RequestMapping(value = "/project/{service}/group/delete", method = RequestMethod.POST)
 	public String deleteGroup(@ModelAttribute GroupKey key,
 			HttpServletRequest request) throws Exception {
 		jailerService.deleteGroup(key);
@@ -152,7 +152,7 @@ public class JailerController {
 		return "redirect:" + referer;
 	}
 
-	@RequestMapping(value = "/dataSource/update", method = RequestMethod.POST)
+	@RequestMapping(value = "/project/{service}/dataSource/update", method = RequestMethod.POST)
 	public String registDataSource(@ModelAttribute DataSourceForm form,
 			HttpServletRequest request) throws Exception {
 		
@@ -166,7 +166,7 @@ public class JailerController {
 		return "redirect:" + referer;
 	}
 
-	@RequestMapping(value = "/dataSourceParameter/regist", method = RequestMethod.POST)
+	@RequestMapping(value = "/project/{service}/dataSourceParameter/regist", method = RequestMethod.POST)
 	public String registdataSourceParameter(
 			@ModelAttribute DataSourceParameterForm form,
 			HttpServletRequest request) throws Exception {
@@ -180,7 +180,7 @@ public class JailerController {
 		return "redirect:" + referer;
 	}
 
-	@RequestMapping(value = "/dataSourceParameter/remove", method = RequestMethod.POST)
+	@RequestMapping(value = "/project/{service}/dataSourceParameter/remove", method = RequestMethod.POST)
 	public String removedataSourceParameter(
 			@ModelAttribute DataSourceParameterForm form,
 			HttpServletRequest request) throws Exception {
