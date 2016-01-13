@@ -2,12 +2,6 @@ package jailer.web.project;
 
 import javax.servlet.http.HttpServletRequest;
 
-import jailer.core.model.DataSourceKey;
-import jailer.core.model.GroupKey;
-import jailer.core.model.JailerDataSource;
-import jailer.core.model.PropertyContents;
-import jailer.core.model.ServiceKey;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jailer.core.model.DataSourceKey;
+import jailer.core.model.GroupKey;
+import jailer.core.model.JailerDataSource;
+import jailer.core.model.PropertyContents;
+import jailer.core.model.ServiceKey;
 
 @Controller
 public class JailerController {
@@ -95,10 +95,14 @@ public class JailerController {
 	
 		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(key);
 		model.addAttribute("jailerDataSource", jailerDataSource);
-	
+
 		DataSourceForm dataSourceForm = new DataSourceForm(key);
 		dataSourceForm.setUrl(jailerDataSource.getUrl());
 		model.addAttribute("dataSourceForm", dataSourceForm);
+	
+		DriverForm driverForm = new DriverForm(key);
+		driverForm.setDriverName(jailerDataSource.getDriverName());
+		model.addAttribute("driverForm", driverForm);
 	
 		DataSourceParameterForm dataSourceParameterForm = new DataSourceParameterForm(key);
 		model.addAttribute("dataSourceParameterForm", dataSourceParameterForm);
@@ -152,6 +156,19 @@ public class JailerController {
 		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
 		jailerDataSource.setUrl(form.getUrl());
 		jailerDataSource.setHide(form.isHide());
+
+		jailerService.registDataSource(form, jailerDataSource);
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + referer;
+	}
+
+	@RequestMapping(value = "/project/{service}/driver/update", method = RequestMethod.POST)
+	public String registDriver(@ModelAttribute DriverForm form,
+			HttpServletRequest request) throws Exception {
+		
+		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
+		jailerDataSource.setDriverName(form.getDriverName());
 
 		jailerService.registDataSource(form, jailerDataSource);
 

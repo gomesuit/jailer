@@ -22,6 +22,23 @@
 		<h3 class="panel-title">接続URL</h3>
 	</div>
 	<div class="panel-body">
+		<strong><h4 th:text="${jailerDataSource.driverName}" /></strong>
+		<br />
+		<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/driver/update'}" th:object="${driverForm}" method="post">
+			<input type="hidden" th:name="serviceId" th:value="${service}" />
+			<input type="hidden" th:name="groupId" th:value="${dataSourceKey.groupId}" />
+			<input type="hidden" th:name="dataSourceId" th:value="${dataSourceKey.dataSourceId}" />
+			<input type="text" class="form-control" th:name="driverName" placeholder="JDBC Driver" />
+			<input type="submit" class="btn btn-primary" value="更新" />
+		</form>
+	</div>
+</div>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">DB接続URL</h3>
+	</div>
+	<div class="panel-body">
 		<strong th:if="${jailerDataSource.hide} == false"><h4 th:text="${jailerDataSource.url}" /></strong>
 		<strong th:if="${jailerDataSource.hide} == true"><h4>●●●●●●●●●●●●●●●●●●</h4></strong>
 		<br />
@@ -41,7 +58,7 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title">接続パラメータ</h3>
+		<h3 class="panel-title">DB接続パラメータ</h3>
 	</div>
 	<div class="panel-body">
 		<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/dataSourceParameter/regist'}" th:object="${dataSourceParameterForm}" method="post">
@@ -136,3 +153,4 @@
 		</tr>
 	</tbody>
 </table>
+
