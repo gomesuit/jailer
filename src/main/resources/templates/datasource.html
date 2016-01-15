@@ -4,7 +4,7 @@
 		<li th:text="${service}" />
 		<li th:text="${dataSourceKey.groupId}" />
 		<li th:text="${dataSourceKey.dataSourceId}" />
-		<li>コネクション詳細</li>
+		<li>JDBC詳細</li>
 	</ol>
 </h1>
 
@@ -13,13 +13,16 @@
 		<h3 class="panel-title">jailer接続URL</h3>
 	</div>
 	<div class="panel-body">
-		<strong><h4 th:text="'jdbc:jailer://' + ${connectString} + '/' + ${jailerDataSource.uuid}" /></strong>
+		<strong><h5>接続Driver</h5></strong>
+		<blockquote class="bg-success"><strong>jailer.jdbc.JailerDriver</strong></blockquote>
+		<strong><h5>接続URL</h5></strong>
+		<blockquote class="bg-success"><strong th:text="'jdbc:jailer://' + ${connectString} + '/' + ${jailerDataSource.uuid}" /></blockquote>
 	</div>
 </div>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title">接続URL</h3>
+		<h3 class="panel-title">DB接続Driver</h3>
 	</div>
 	<div class="panel-body">
 		<strong><h4 th:text="${jailerDataSource.driverName}" /></strong>
@@ -115,6 +118,7 @@
 			<td class="text-center"><strong>接続元ホスト名</strong></td>
 			<td class="text-center"><strong>接続元IPアドレス</strong></td>
 			<td class="text-center"><strong>接続開始日時</strong></td>
+			<td class="text-center"><strong>接続Driver</strong></td>
 			<td class="text-center"><strong>接続url</strong></td>
 			<td class="text-center"><strong>接続パラメータ</strong></td>
 			<td class="text-center"><strong>オプションパラメータ</strong></td>
@@ -123,23 +127,26 @@
 	<tbody>
 		<tr th:each="connection : ${connectionList}" th:class="${connection.value.warning}? warning">
 			<td>
-				<div th:text="${connection.key}" />
+				<div class="small" th:text="${connection.key}" />
 			</td>
 			<td>
-				<div th:text="${connection.value.host}" />
+				<div class="small" th:text="${connection.value.host}" />
 			</td>
 			<td>
-				<div th:text="${connection.value.ipAddress}" />
+				<div class="small" th:text="${connection.value.ipAddress}" />
 			</td>
 			<td>
-				<div th:text="${#dates.format(connection.value.sinceConnectTime, 'yyyy/MM/dd HH:mm:ss')}" />
+				<div class="small" th:text="${#dates.format(connection.value.sinceConnectTime, 'yyyy/MM/dd HH:mm:ss')}" />
 			</td>
 			<td>
-				<div th:if="${connection.value.hide} == false" th:text="${connection.value.connectUrl}" />
-				<div th:if="${connection.value.hide} == true">●●●●●●●●●</div>
+				<div class="small" th:text="${connection.value.driverName}" />
 			</td>
 			<td>
-				<div th:each="property : ${connection.value.propertyList}" th:remove="tag">
+				<div class="small" th:if="${connection.value.hide} == false" th:text="${connection.value.connectUrl}" />
+				<div class="small" th:if="${connection.value.hide} == true">●●●●●●●●●</div>
+			</td>
+			<td>
+				<div class="small" th:each="property : ${connection.value.propertyList}" th:remove="tag">
 					<span th:text="${property.key}" />
 					=
 					<span th:if="${property.value.hide} == false" th:text="${property.value.value}" />
@@ -148,7 +155,12 @@
 				</div>
 			</td>
 			<td>
-				<div th:text="${connection.value.optionalParam}" />
+				<div class="small" th:each="param : ${connection.value.optionalParam}" th:remove="tag">
+					<span th:text="${param.key}" />
+					=
+					<span th:text="${param.value}" />
+					<br />
+				</div>
 			</td>
 		</tr>
 	</tbody>

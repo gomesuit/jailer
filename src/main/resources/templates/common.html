@@ -13,7 +13,6 @@
 	<script src="/js/bootstrap.min.js"></script>
 </head>
 
-
 <div th:fragment="menubar" th:remove="tag">
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
@@ -38,11 +37,9 @@
 </div>
 
 <div th:fragment="sidebar" th:remove="tag">
-	<div class="col-sm-3 col-md-2 sidebar">
-		<ul class="nav nav-sidebar">
-			<div th:each="menu : ${menuList}" th:remove="tag">
-				<li th:class="${menu.active}? active"><a th:href="${menu.url}" th:text="${menu.name}" /></li>
-			</div>
-		</ul>
-	</div>
+	<ul class="nav nav-sidebar">
+		<div th:each="menu : ${menuList}" th:remove="tag">
+			<li th:class="${menu.active}? active"><a th:href="${menu.url}" th:text="${menu.name}" /></li>
+		</div>
+	</ul>
 </div>

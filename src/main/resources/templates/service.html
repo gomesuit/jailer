@@ -2,13 +2,13 @@
 <h1>
 	<ol class="breadcrumb">
 		<li th:text="${service}" />
-		<li>グループ</li>
+		<li>GROUP</li>
 	</ol>
 </h1>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title">グループ</h3>
+		<h3 class="panel-title">登録済みグループ一覧</h3>
 	</div>
 	<div class="panel-body">
 		<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/group/regist'}" th:object="${groupKey}" method="post">
@@ -42,3 +42,4 @@
 		</table>
 	</div>
 </div>
+

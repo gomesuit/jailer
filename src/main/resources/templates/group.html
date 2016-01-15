@@ -2,13 +2,13 @@
 <h1>
 	<ol class="breadcrumb">
 		<li th:text="${service}" />
-		<li>コネクション</li>
+		<li>JDBC</li>
 	</ol>
 </h1>
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-		<h3 class="panel-title">コネクション</h3>
+		<h3 class="panel-title">登録済みJDBC一覧</h3>
 	</div>
 	<div class="panel-body">
 		<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/dataSource/regist'}" th:object="${dataSourceInputForm}" method="post">
@@ -57,3 +57,4 @@
 		</table>
 	</div>
 </div>
+
