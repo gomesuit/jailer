@@ -93,15 +93,17 @@ public class JailerController {
 		
 		model.addAttribute("connectString", jailerService.getConnectString());
 	
-		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(key);
-		model.addAttribute("jailerDataSource", jailerDataSource);
+		JailerDataSource jailerDataSourceCorrent = jailerService.getJailerDataSource(key);
+		model.addAttribute("jailerDataSourceCorrent", jailerDataSourceCorrent);
+
+		model.addAttribute("jailerDataSourcePlan", jailerService.getJailerDataSourcePlan(key));
 
 		DataSourceForm dataSourceForm = new DataSourceForm(key);
-		dataSourceForm.setUrl(jailerDataSource.getUrl());
+		dataSourceForm.setUrl(jailerDataSourceCorrent.getUrl());
 		model.addAttribute("dataSourceForm", dataSourceForm);
 	
 		DriverForm driverForm = new DriverForm(key);
-		driverForm.setDriverName(jailerDataSource.getDriverName());
+		driverForm.setDriverName(jailerDataSourceCorrent.getDriverName());
 		model.addAttribute("driverForm", driverForm);
 	
 		DataSourceParameterForm dataSourceParameterForm = new DataSourceParameterForm(key);
@@ -153,11 +155,11 @@ public class JailerController {
 	public String registDataSource(@ModelAttribute DataSourceForm form,
 			HttpServletRequest request) throws Exception {
 		
-		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
+		JailerDataSource jailerDataSource = jailerService.getJailerDataSourcePlan(form);
 		jailerDataSource.setUrl(form.getUrl());
 		jailerDataSource.setHide(form.isHide());
 
-		jailerService.registDataSource(form, jailerDataSource);
+		jailerService.registDataSourcePlan(form, jailerDataSource);
 
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
@@ -167,10 +169,10 @@ public class JailerController {
 	public String registDriver(@ModelAttribute DriverForm form,
 			HttpServletRequest request) throws Exception {
 		
-		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
+		JailerDataSource jailerDataSource = jailerService.getJailerDataSourcePlan(form);
 		jailerDataSource.setDriverName(form.getDriverName());
 
-		jailerService.registDataSource(form, jailerDataSource);
+		jailerService.registDataSourcePlan(form, jailerDataSource);
 
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
@@ -181,10 +183,10 @@ public class JailerController {
 			@ModelAttribute DataSourceParameterForm form,
 			HttpServletRequest request) throws Exception {
 		
-		JailerDataSource jailerDataSource = jailerService.getJailerDataSource(form);
+		JailerDataSource jailerDataSource = jailerService.getJailerDataSourcePlan(form);
 		jailerDataSource.addProperty(form.getKey(), new PropertyContents(form.getValue(), form.isHide()));
 
-		jailerService.registDataSource(form, jailerDataSource);
+		jailerService.registDataSourcePlan(form, jailerDataSource);
 
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
@@ -194,11 +196,19 @@ public class JailerController {
 	public String removedataSourceParameter(
 			@ModelAttribute DataSourceParameterForm form,
 			HttpServletRequest request) throws Exception {
-		JailerDataSource jailerDataSource = jailerService
-				.getJailerDataSource(form);
+		JailerDataSource jailerDataSource = jailerService.getJailerDataSourcePlan(form);
 		jailerDataSource.removeProperty(form.getKey());
 
-		jailerService.registDataSource(form, jailerDataSource);
+		jailerService.registDataSourcePlan(form, jailerDataSource);
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + referer;
+	}
+
+	@RequestMapping(value = "/project/{service}/dataSource/reflection", method = RequestMethod.POST)
+	public String reflectionDataSource(@ModelAttribute DataSourceKey key, HttpServletRequest request) throws Exception{
+		JailerDataSource jailerDataSourcePlan = jailerService.getJailerDataSourcePlan(key);
+		jailerService.registDataSourceCorrent(key, jailerDataSourcePlan);
 
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;

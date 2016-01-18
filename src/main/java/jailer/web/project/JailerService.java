@@ -76,14 +76,22 @@ public class JailerService {
 		repository.deleteDataSource(key);
 	}
 	
-	public void registDataSource(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception{
-		repository.updateDataSource(key, jailerDataSource);
+	public void registDataSourcePlan(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception{
+		repository.updateDataSourcePlan(key, jailerDataSource);
+	}
+	
+	public void registDataSourceCorrent(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception{
+		repository.updateDataSourceCorrent(key, jailerDataSource);
 	}
 	
 	public JailerDataSource getJailerDataSource(DataSourceKey key) throws Exception{
 		return repository.getDataSource(key);
 	}
 	
+	public JailerDataSource getJailerDataSourcePlan(DataSourceKey key) throws Exception {
+		return repository.getDataSourcePlan(key);
+	}
+
 	public Map<String, ConnectionInfo> getConnectionList(DataSourceKey key) throws Exception{
 		Map<String, ConnectionInfo> connectionList = new LinkedHashMap<>();
 		

@@ -61,9 +61,13 @@ public class ZookeeperRepository {
 	public void registDataSource(DataSourceKey key, JailerDataSource dataSource) throws Exception{
 		String data = CommonUtil.objectToJson(dataSource);
 		zooKeeper.createDataForPersistent(PathManager.getDataSourcePath(key), data);
+		zooKeeper.createDataForPersistent(PathManager.getDataSourceCorrentPath(key), data);
+		zooKeeper.createDataForPersistent(PathManager.getDataSourcePlanPath(key), data);
 	}
 
 	public void deleteDataSource(DataSourceKey key) throws Exception{
+		zooKeeper.delete(PathManager.getDataSourceCorrentPath(key));
+		zooKeeper.delete(PathManager.getDataSourcePlanPath(key));
 		zooKeeper.delete(PathManager.getDataSourcePath(key));
 	}
 
@@ -76,16 +80,26 @@ public class ZookeeperRepository {
 		}
 	}
 
-	public void updateDataSource(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception {
+	public void updateDataSourceCorrent(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception {
 		String data = CommonUtil.objectToJson(jailerDataSource);
-		zooKeeper.setData(PathManager.getDataSourcePath(key), data);
+		zooKeeper.setData(PathManager.getDataSourceCorrentPath(key), data);
+	}
+
+	public void updateDataSourcePlan(DataSourceKey key, JailerDataSource jailerDataSource) throws Exception {
+		String data = CommonUtil.objectToJson(jailerDataSource);
+		zooKeeper.setData(PathManager.getDataSourcePlanPath(key), data);
 	}
 
 	public JailerDataSource getDataSource(DataSourceKey key) throws Exception {
-		String result = zooKeeper.getData(PathManager.getDataSourcePath(key));
+		String result = zooKeeper.getData(PathManager.getDataSourceCorrentPath(key));
 		return CommonUtil.jsonToObject(result, JailerDataSource.class);
 	}
 	
+	public JailerDataSource getDataSourcePlan(DataSourceKey key) throws Exception {
+		String result = zooKeeper.getData(PathManager.getDataSourcePlanPath(key));
+		return CommonUtil.jsonToObject(result, JailerDataSource.class);
+	}
+
 	public ConnectionInfo getConnectionInfo(ConnectionKey key) throws Exception{
 		String result = zooKeeper.getData(PathManager.getConnectionPath(key));
 		return CommonUtil.jsonToObject(result, ConnectionInfo.class);
@@ -93,7 +107,7 @@ public class ZookeeperRepository {
 	
 	public List<String> getConnectionList(DataSourceKey key){
 		try {
-			return zooKeeper.getChildren(PathManager.getDataSourcePath(key));
+			return zooKeeper.getChildren(PathManager.getDataSourceCorrentPath(key));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<>();
@@ -115,7 +129,7 @@ public class ZookeeperRepository {
 	}
 	
 	public int getConnectionNum(DataSourceKey key) throws Exception{
-		List<String> children = zooKeeper.getChildren(PathManager.getDataSourcePath(key));
+		List<String> children = zooKeeper.getChildren(PathManager.getDataSourceCorrentPath(key));
 		return children.size();
 	}
 }
