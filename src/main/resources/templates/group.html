@@ -23,13 +23,17 @@
 		<br />
 		<table class="table table-bordered">
 			<tr>
-				<td class="text-center"><strong>GROUP</strong></td>
-				<td class="text-center"><strong>ID</strong></td>
-				<td class="text-center"><strong>UUID</strong></td>
-				<td class="text-center"><strong>詳細</strong></td>
-				<td class="text-center"><strong>削除</strong></td>
+				<th>#</th>
+				<th>GROUP</th>
+				<th>ID</th>
+				<th>UUID</th>
+				<th>詳細</th>
+				<th>削除</th>
 			</tr>
-			<tr th:each="connection : ${connectionList}">
+			<tr th:each="connection,iterStat : ${connectionList}">
+				<td>
+					<div class="text-center" th:text="${iterStat.count}" />
+				</td>
 				<td>
 					<div th:text="${connection.group}" />
 				</td>

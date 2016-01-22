@@ -21,13 +21,19 @@
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<td class="text-center"><strong>GROUP</strong></td>
-					<td class="text-center"><strong>削除</strong></td>
+					<th>#</th>
+					<th>GROUP</th>
+					<th>削除</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="group : ${groupList}">
-					<td><div th:text="${group}" /></td>
+				<tr th:each="group,iterStat : ${groupList}">
+					<td>
+						<div class="text-center" th:text="${iterStat.count}" />
+					</td>
+					<td>
+						<div th:text="${group}" />
+					</td>
 					<td class="text-center">
 						<form class="form-inline" action="#" th:action="@{'/project/' + ${service} + '/group/delete'}" th:object="${groupKey}" method="post">
 							<input type="hidden" th:name="serviceId" th:value="${service}" />	

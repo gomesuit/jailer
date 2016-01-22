@@ -10,12 +10,18 @@
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<td class="text-center"><strong>SERVICE</strong></td>
+						<th>#</th>
+						<th>SERVICE</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="service : ${serviceList}">
-						<td><a th:href="@{'/project/' + ${service} + '/group'}" th:text="${service}">test</a></td>
+					<tr th:each="service,iterStat : ${serviceList}">
+						<td>
+							<div class="text-center" th:text="${iterStat.count}" />
+						</td>
+						<td>
+							<a th:href="@{'/project/' + ${service} + '/group'}" th:text="${service}">test</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>

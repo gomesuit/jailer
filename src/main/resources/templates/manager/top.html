@@ -16,13 +16,19 @@
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<td class="text-center"><strong>SERVICE</strong></td>
-					<td class="text-center"><strong>削除</strong></td>
+					<th>#</th>
+					<th>SERVICE</th>
+					<th>削除</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="service : ${serviceList}">
-					<td><a th:href="@{'/project/' + ${service} + '/group'}" th:text="${service}">test</a></td>
+				<tr th:each="service,iterStat : ${serviceList}">
+					<td>
+						<div class="text-center" th:text="${iterStat.count}" />
+					</td>
+					<td>
+						<a th:href="@{'/project/' + ${service} + '/group'}" th:text="${service}">test</a>
+					</td>
 					<td class="text-center">
 						<form class="form-inline" action="#" th:action="@{/manager/service/delete}" th:object="${serviceKey}" method="post">
 							<input type="hidden" th:name="serviceId" th:value="${service}" />	

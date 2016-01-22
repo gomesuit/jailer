@@ -1,6 +1,7 @@
 package jailer.web.project;
 
 import jailer.core.CommonUtil;
+import jailer.core.encrypt.JailerEncryptException;
 import jailer.core.model.ConnectionInfo;
 import jailer.core.model.ConnectionKey;
 import jailer.core.model.DataSourceKey;
@@ -44,16 +45,31 @@ public class JailerService {
 				dataSourceKey.setGroupId(groupKey.getGroupId());
 				dataSourceKey.setDataSourceId(dataSourceId);
 				
-				RowConnectionInfo connectionInfo = new RowConnectionInfo();
-				connectionInfo.setGroup(group);
-				connectionInfo.setId(dataSourceId);
-				connectionInfo.setPoint(repository.getConnectionNum(dataSourceKey));
-				connectionInfo.setUuid(repository.getDataSource(dataSourceKey).getUuid());
+				RowConnectionInfo connectionInfo = createRowConnectionInfo(dataSourceKey);
 				connectionInfoList.add(connectionInfo);
 			}
 		}
 		
 		return connectionInfoList;
+	}
+	
+	private RowConnectionInfo createRowConnectionInfo(DataSourceKey key) throws Exception{
+		RowConnectionInfo connectionInfo = new RowConnectionInfo();
+		connectionInfo.setGroup(key.getGroupId());
+		connectionInfo.setId(key.getDataSourceId());
+		try{
+			connectionInfo.setPoint(repository.getConnectionNum(key));
+		}catch(KeeperException e){
+			connectionInfo.setPoint(99999);
+		}
+		try{
+			connectionInfo.setUuid(repository.getDataSource(key).getUuid());
+		}catch(JailerEncryptException e){
+			connectionInfo.setUuid("Fail in decrypt!!");
+		}catch(KeeperException e){
+			connectionInfo.setUuid("KeeperException!!");
+		}
+		return connectionInfo;
 	}
 	
 	public void registDataSourceId(DataSourceKey key) throws Exception{
