@@ -55,16 +55,16 @@ public class JailerZookeeperCurator {
 	}
 
 	public void createDataForPersistent(String path, String data) throws Exception {
-		client.create().withMode(CreateMode.PERSISTENT).forPath(path, encryption.encode(data));
+		client.create().withMode(CreateMode.PERSISTENT).forPath(path, encryption.encrypt(data));
 	}
 	
 	public String getData(String path) throws Exception{
 		byte[] strByte = client.getData().forPath(path);
-		return encryption.decoded(strByte);
+		return encryption.decrypt(strByte);
 	}
 	
 	public void setData(String path, String data) throws Exception{
-		client.setData().forPath(path, encryption.encode(data));
+		client.setData().forPath(path, encryption.encrypt(data));
 	}
 	
 	public List<String> getChildren(String path) throws Exception{
@@ -72,11 +72,11 @@ public class JailerZookeeperCurator {
 	}
 
 	public void createDataForEphemeral(String path, String data) throws Exception {
-		client.create().withMode(CreateMode.EPHEMERAL).forPath(path, encryption.encode(data));
+		client.create().withMode(CreateMode.EPHEMERAL).forPath(path, encryption.encrypt(data));
 	}
 
 	public String createDataForEphemeralSequential(String path, String data) throws Exception {
-		return client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path, encryption.encode(data));
+		return client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(path, encryption.encrypt(data));
 	}
 
 	public void delete(String path) throws Exception {
