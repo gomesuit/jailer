@@ -8,8 +8,10 @@ import jailer.core.model.DataSourceKey;
 import jailer.core.model.GroupKey;
 import jailer.core.model.JailerDataSource;
 import jailer.core.model.ServiceKey;
+import jailer.web.util.JDBCURLUtils;
 import jailer.web.zookeeper.ZookeeperRepository;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -106,6 +108,56 @@ public class JailerService {
 	
 	public JailerDataSource getJailerDataSourcePlan(DataSourceKey key) throws Exception {
 		return repository.getDataSourcePlan(key);
+	}
+	
+	public boolean isExistCheck(DataSourceKey key, String url) throws Exception{
+
+		for(String group : getGroupList(key)){
+			GroupKey groupKey = new GroupKey();
+			groupKey.setServiceId(key.getServiceId());
+			groupKey.setGroupId(group);
+			for(String dataSourceId : getDataSourceIdList(groupKey)){
+				DataSourceKey dataSourceKey = new DataSourceKey();
+				dataSourceKey.setServiceId(groupKey.getServiceId());
+				dataSourceKey.setGroupId(groupKey.getGroupId());
+				dataSourceKey.setDataSourceId(dataSourceId);
+				
+				if(key.equals(dataSourceKey)) continue;
+				
+				String registedUrl = repository.getDataSource(dataSourceKey).getUrl();
+				if(isSame(url, registedUrl)){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean isSame(String urlA, String urlB){
+		try{
+			if(!JDBCURLUtils.isJDBCURL(urlA)) return false;
+			if(!JDBCURLUtils.isJDBCURL(urlB)) return false;
+			
+			URI uriA = new URI(JDBCURLUtils.getExcludePrefix(urlA));
+			URI uriB = new URI(JDBCURLUtils.getExcludePrefix(urlB));
+			
+			if(uriA.equals(uriB)){
+				return true;
+			}
+
+			if(!uriA.getHost().equals(uriB.getHost())){
+				return false;
+			}
+
+			if(!uriA.getPath().equals(uriB.getPath())){
+				return false;
+			}
+			
+			return true;
+		}catch(Exception e){
+			return false;
+		}
 	}
 
 	public Map<String, ConnectionInfo> getConnectionList(DataSourceKey key) throws Exception{

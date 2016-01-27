@@ -1,5 +1,8 @@
 package jailer.web.project;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import jailer.core.model.GroupKey;
 import jailer.core.model.JailerDataSource;
 import jailer.core.model.PropertyContents;
 import jailer.core.model.ServiceKey;
+import jailer.web.util.JDBCURLUtils;
 
 @Controller
 public class JailerController {
@@ -110,6 +114,15 @@ public class JailerController {
 		model.addAttribute("dataSourceParameterForm", dataSourceParameterForm);
 	
 		model.addAttribute("connectionList", jailerService.getConnectionList(key));
+		
+		String url = jailerDataSourceCorrent.getUrl();
+		if(jailerService.isExistCheck(key, url)){
+			List<String> messageList = new ArrayList<>();
+			String host = JDBCURLUtils.getHost(url);
+			String databaseName = JDBCURLUtils.getDatabaseName(url);
+			messageList.add("host名『" + host + "』、database名『" + databaseName + "』は既に登録されています。");
+			model.addAttribute("messageList", messageList);
+		}
 	
 		request.setAttribute("pageName", "datasource");
 		return "common_frame";
