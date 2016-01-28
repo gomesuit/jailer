@@ -226,4 +226,46 @@ public class JailerController {
 		String referer = request.getHeader("Referer");
 		return "redirect:" + referer;
 	}
+	
+	@RequestMapping("/project/{service}/jdbcSearch")
+	public String jdbcSearch(
+			@PathVariable String service,
+			Model model,
+			HttpServletRequest request) throws Exception {
+		
+		ServiceKey key = new ServiceKey();
+		key.setServiceId(service);
+		
+		// ページ共通キー
+		model.addAttribute("serviceKey", key);
+		
+		// 一覧
+		model.addAttribute("jDBCSearchInfoRowList", jailerService.getJDBCSearchInfoRowList(key));
+		
+		// ページ設定
+		request.setAttribute("pageName", "jdbc_search");
+		
+		return "common_frame";
+	}
+	
+	@RequestMapping("/project/{service}/connectionSearch")
+	public String connectionSearch(
+			@PathVariable String service,
+			Model model,
+			HttpServletRequest request) throws Exception {
+		
+		ServiceKey key = new ServiceKey();
+		key.setServiceId(service);
+		
+		// ページ共通キー
+		model.addAttribute("serviceKey", key);
+		
+		// 一覧
+		model.addAttribute("connectionSearchInfoRowList", jailerService.getConnectionSearchInfoRowList(key));
+		
+		// ページ設定
+		request.setAttribute("pageName", "connection_search");
+		
+		return "common_frame";
+	}
 }

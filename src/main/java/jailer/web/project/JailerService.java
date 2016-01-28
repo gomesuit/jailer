@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.zookeeper.KeeperException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,81 @@ public class JailerService {
 		return repository.getConnectString();
 	}
 	
+	public List<ConnectionSearchInfoRow> getConnectionSearchInfoRowList(ServiceKey key) throws Exception{
+		List<ConnectionSearchInfoRow> connectionSearchInfoRowList = new ArrayList<>();
+
+		for(String group : getGroupList(key)){
+			GroupKey groupKey = new GroupKey();
+			groupKey.setServiceId(key.getServiceId());
+			groupKey.setGroupId(group);
+			for(String dataSourceId : getDataSourceIdList(groupKey)){
+				DataSourceKey dataSourceKey = new DataSourceKey();
+				dataSourceKey.setServiceId(groupKey.getServiceId());
+				dataSourceKey.setGroupId(groupKey.getGroupId());
+				dataSourceKey.setDataSourceId(dataSourceId);
+				
+				for(Entry<String, ConnectionInfo> keyValue : getConnectionList(dataSourceKey).entrySet()){
+					ConnectionInfo info = keyValue.getValue();
+					
+					ConnectionSearchInfoRow row = new ConnectionSearchInfoRow();
+					row.setGroup(dataSourceKey.getGroupId());
+					row.setId(dataSourceKey.getDataSourceId());
+					row.setConnectionId(keyValue.getKey());
+					row.setHost(info.getHost());
+					row.setIpAddress(info.getIpAddress());
+					row.setSinceConnectTime(info.getSinceConnectTime());
+					row.setDriverName(info.getDriverName());
+					row.setConnectUrl(info.getConnectUrl());
+					row.setHide(info.isHide());
+					row.setPropertyList(info.getPropertyList());
+					row.setOptionalParam(info.getOptionalParam());
+					row.setWarning(info.isWarning());
+					
+					connectionSearchInfoRowList.add(row);
+				}
+			}
+		}
+		
+		return connectionSearchInfoRowList;
+	}
+	
+	public List<JDBCSearchInfoRow> getJDBCSearchInfoRowList(ServiceKey key) throws Exception{
+		List<JDBCSearchInfoRow> jDBCSearchInfoRowList = new ArrayList<>();
+
+		for(String group : getGroupList(key)){
+			GroupKey groupKey = new GroupKey();
+			groupKey.setServiceId(key.getServiceId());
+			groupKey.setGroupId(group);
+			for(String dataSourceId : getDataSourceIdList(groupKey)){
+				DataSourceKey dataSourceKey = new DataSourceKey();
+				dataSourceKey.setServiceId(groupKey.getServiceId());
+				dataSourceKey.setGroupId(groupKey.getGroupId());
+				dataSourceKey.setDataSourceId(dataSourceId);
+				
+				JDBCSearchInfoRow jDBCSearchInfoRow = createJDBCSearchInfoRow(dataSourceKey);
+				jDBCSearchInfoRowList.add(jDBCSearchInfoRow);
+			}
+		}
+		
+		return jDBCSearchInfoRowList;
+	}
+	
+	private JDBCSearchInfoRow createJDBCSearchInfoRow(DataSourceKey key) throws Exception {
+		JailerDataSource jailerDataSource = repository.getDataSource(key);
+		
+		JDBCSearchInfoRow jDBCSearchInfoRow = new JDBCSearchInfoRow();
+		jDBCSearchInfoRow.setGroup(key.getGroupId());
+		jDBCSearchInfoRow.setId(key.getDataSourceId());
+		jDBCSearchInfoRow.setPoint(repository.getConnectionNum(key));
+		jDBCSearchInfoRow.setDriverName(jailerDataSource.getDriverName());
+		jDBCSearchInfoRow.setUrl(jailerDataSource.getUrl());
+		jDBCSearchInfoRow.setHide(jailerDataSource.isHide());
+		jDBCSearchInfoRow.setPropertyList(jailerDataSource.getPropertyList());
+		jDBCSearchInfoRow.setUuid(jailerDataSource.getUuid());
+		
+		return jDBCSearchInfoRow;
+	}
+
 	public List<RowConnectionInfo> getConnectionInfoList(ServiceKey key) throws Exception{
 		List<RowConnectionInfo> connectionInfoList = new ArrayList<>();
 		

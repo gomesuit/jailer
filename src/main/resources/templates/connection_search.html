@@ -1,0 +1,119 @@
+
+<h1>
+	<ol class="breadcrumb">
+		<li th:text="${service}" />
+		<li>CONNECTION SEARCH</li>
+	</ol>
+</h1>
+
+<table id="targetTableID" class="table table-striped table-bordered" cellspacing="0" width="100%">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>GROUP</th>
+			<th>ID</th>
+			<th>CONNECTION</th>
+			<th>HOST</th>
+			<th>IP</th>
+			<th>DATE</th>
+			<th>DRIVER</th>
+			<th>URL</th>
+			<th>PARAMETER</th>
+			<th>OPTION</th>
+		</tr>
+		<tr class="filter">
+			<th> </th>
+			<th><input type="text" placeholder="Search GROUP" /></th>
+			<th><input type="text" placeholder="Search ID" /></th>
+			<th><input type="text" placeholder="Search CONNECTION" /></th>
+			<th><input type="text" placeholder="Search HOST" /></th>
+			<th><input type="text" placeholder="Search IP" /></th>
+			<th><input type="text" placeholder="Search DATE" /></th>
+			<th><input type="text" placeholder="Search DRIVER" /></th>
+			<th><input type="text" placeholder="Search URL" /></th>
+			<th><input type="text" placeholder="Search PARAMETER" /></th>
+			<th><input type="text" placeholder="Search OPTION" /></th>
+		</tr>
+	</thead>
+	<tr th:each="row,iterStat : ${connectionSearchInfoRowList}" th:class="${row.warning}? warning">
+		<td>
+			<div class="text-center small" th:text="${iterStat.count}" />
+		</td>
+		<td>
+			<div class="small" th:text="${row.group}" />
+		</td>
+		<td>
+			<div class="small" th:text="${row.id}" />
+		</td>
+		<td>
+			<div class="small" th:text="${#strings.abbreviate(row.connectionId,10)}" />
+		</td>
+		<td>
+			<div class="small" th:text="${row.host}" />
+		</td>
+		<td>
+			<div class="small" th:text="${row.ipAddress}" />
+		</td>
+		<td>
+			<div class="small" th:text="${#dates.format(row.sinceConnectTime, 'yyyy/MM/dd HH:mm:ss')}" />
+		</td>
+		<td>
+			<div class="small" th:text="${row.driverName}" />
+		</td>
+		<td>
+			<div class="small" th:if="${row.hide} == false" th:text="${row.connectUrl}" />
+			<div class="small" th:if="${row.hide} == true">●●●●●●●●●</div>
+		</td>
+		<td>
+			<div class="small" th:each="property : ${row.propertyList}" th:remove="tag">
+				<span th:text="${property.key}" />
+				=
+				<span th:if="${property.value.hide} == false" th:text="${property.value.value}" />
+				<span th:if="${property.value.hide} == true">●●●●●●●●●</span>
+				<br />
+			</div>
+		</td>
+		<td>
+			<div class="small" th:each="param : ${row.optionalParam}" th:remove="tag">
+				<span th:text="${param.key}" />
+				=
+				<span th:text="${param.value}" />
+				<br />
+			</div>
+		</td>
+	</tr>
+	<tfoot>
+		<th>#</th>
+		<th>GROUP</th>
+		<th>ID</th>
+		<th>CONNECTION</th>
+		<th>HOST</th>
+		<th>IP</th>
+		<th>DATE</th>
+		<th>DRIVER</th>
+		<th>URL</th>
+		<th>PARAMETER</th>
+		<th>OPTION</th>
+	</tfoot>
+</table>
+
+<script>
+/*<![CDATA[*/
+$(function() {	
+	var table = $('#targetTableID').DataTable({
+		"dom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>'
+	});
+	
+	// Apply the search
+    table.columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.header() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that.search( this.value ).draw();
+            }
+        } );
+    } );
+});
+/*]]>*/
+</script>

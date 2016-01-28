@@ -1,0 +1,96 @@
+
+<h1>
+	<ol class="breadcrumb">
+		<li th:text="${service}" />
+		<li>JDBC SEARCH</li>
+	</ol>
+</h1>
+
+<table id="targetTableID" class="table table-bordered">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>GROUP</th>
+			<th>ID</th>
+			<th>DRIVER</th>
+			<th>URL</th>
+			<th>PARAMETER</th>
+			<th>UUID</th>
+			<th>詳細</th>
+		</tr>
+		<tr class="filter">
+			<th> </th>
+			<th><input type="text" placeholder="Search GROUP" /></th>
+			<th><input type="text" placeholder="Search ID" /></th>
+			<th><input type="text" placeholder="Search DRIVER" /></th>
+			<th><input type="text" placeholder="Search URL" /></th>
+			<th><input type="text" placeholder="Search PARAMETER" /></th>
+			<th><input type="text" placeholder="Search UUID" /></th>
+			<th>　　</th>
+		</tr>
+	</thead>
+	<tr th:each="jDBCSearchInfoRow,iterStat : ${jDBCSearchInfoRowList}">
+		<td>
+			<div class="text-center" th:text="${iterStat.count}" />
+		</td>
+		<td>
+			<div th:text="${jDBCSearchInfoRow.group}" />
+		</td>
+		<td>
+			<span th:text="${jDBCSearchInfoRow.id}" />
+			<span class="badge" th:text="${jDBCSearchInfoRow.point}" />
+		</td>
+		<td>
+			<div th:text="${jDBCSearchInfoRow.driverName}" />
+		</td>
+		<td>
+			<div th:text="${jDBCSearchInfoRow.url}" />
+		</td>
+		<td>
+			<div class="small" th:each="property : ${jDBCSearchInfoRow.propertyList}" th:remove="tag">
+				<span th:text="${property.key}" />
+				=
+				<span th:if="${property.value.hide} == false" th:text="${property.value.value}" />
+				<span th:if="${property.value.hide} == true">●●●●●●●●●</span>
+				<br />
+			</div>
+		</td>
+		<td>
+			<div th:text="${jDBCSearchInfoRow.uuid}" />
+		</td>
+		<td class="text-center">
+			<a th:href="@{'/project/' + ${service} + '/dataSource'(group=${jDBCSearchInfoRow.group}, dataSource=${jDBCSearchInfoRow.id})}">詳細</a>
+		</td>
+	</tr>
+	<tfoot>
+		<th>#</th>
+		<th>GROUP</th>
+		<th>ID</th>
+		<th>DRIVER</th>
+		<th>URL</th>
+		<th>PARAMETER</th>
+		<th>UUID</th>
+		<th>詳細</th>
+	</tfoot>
+</table>
+
+<script>
+/*<![CDATA[*/
+$(function() {
+	var table = $('#targetTableID').DataTable({
+		"dom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>'
+	});
+	
+	// Apply the search
+    table.columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.header() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that.search( this.value ).draw();
+            }
+        } );
+    } );
+});
+/*]]>*/
+</script>
