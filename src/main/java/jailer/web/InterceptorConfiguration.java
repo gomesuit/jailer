@@ -49,6 +49,8 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
 			List<SideMenu> menuList = new ArrayList<>();
 			menuList.add(new SideMenu("/project/" + service + "/group", "GROUP", pageName.equals("service")));
 			menuList.add(new SideMenu("/project/" + service + "/list", "JDBC", pageName.equals("group")));
+			menuList.add(new SideMenu("/project/" + service + "/jdbcSearch", "JDBC SEARCH", pageName.equals("jdbc_search")));
+			menuList.add(new SideMenu("/project/" + service + "/connectionSearch", "CONNECTION SEARCH", pageName.equals("connection_search")));
 			
 			request.setAttribute("menuList", menuList);
 		}
