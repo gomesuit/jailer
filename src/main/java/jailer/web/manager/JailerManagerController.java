@@ -2,6 +2,7 @@ package jailer.web.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +11,7 @@ import jailer.web.project.JailerService;
 
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +23,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class JailerManagerController {
 	@Autowired
 	private JailerService jailerService;
+	@Autowired
+	private MessageSource msg;
 	
 	@RequestMapping("/manager")
 	public String top(Model model,
@@ -41,7 +45,8 @@ public class JailerManagerController {
 			jailerService.registService(key);
 		}catch(NodeExistsException e){
 			List<String> alertList = new ArrayList<>();
-			alertList.add(key.getServiceId() + "は既に存在しています。");
+			String[] variable = new String[]{key.getServiceId()};
+			alertList.add(msg.getMessage("errors.registService.exists", variable, Locale.JAPAN));
 			redirectAttrs.addFlashAttribute("alertList", alertList);
 		}
 
