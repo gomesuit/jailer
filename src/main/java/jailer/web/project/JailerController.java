@@ -2,10 +2,12 @@ package jailer.web.project;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,12 +21,15 @@ import jailer.core.model.GroupKey;
 import jailer.core.model.JailerDataSource;
 import jailer.core.model.PropertyContents;
 import jailer.core.model.ServiceKey;
+import jailer.web.JailerControllerBase;
 import jailer.web.util.JDBCURLUtils;
 
 @Controller
-public class JailerController {
+public class JailerController extends JailerControllerBase{	
 	@Autowired
 	private JailerService jailerService;
+	@Autowired
+	private MessageSource msg;
 
 	@RequestMapping("/")
 	public String top(
@@ -120,7 +125,7 @@ public class JailerController {
 			List<String> messageList = new ArrayList<>();
 			String host = JDBCURLUtils.getHost(url);
 			String databaseName = JDBCURLUtils.getDatabaseName(url);
-			messageList.add("host名『" + host + "』、database名『" + databaseName + "』は既に登録されています。");
+			messageList.add(msg.getMessage("alert.jdbc.exists", new String[]{host, databaseName}, Locale.JAPAN));
 			model.addAttribute("messageList", messageList);
 		}
 	
